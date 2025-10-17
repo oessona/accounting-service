@@ -16,6 +16,9 @@ class User extends Authenticatable
 
     protected $fillable = ['name', 'email', 'password', 'role'];
 
+    public function isAdmin(): bool{
+        return $this->role ==='admin';
+    }
     public function accounts(){
         return $this->hasMany(Account::class);
     }
