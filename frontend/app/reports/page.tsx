@@ -12,7 +12,6 @@ import 'react-datepicker/dist/react-datepicker.css';
 
 export default function ReportsPage() {
   const [reportType, setReportType] = useState('profit-loss');
-  // We'll keep period as a Date internally
   const [periodDate, setPeriodDate] = useState<Date | null>(new Date());
   const [data, setData] = useState({
     income: 7500,
@@ -22,7 +21,6 @@ export default function ReportsPage() {
   });
 
   useEffect(() => {
-    // Whenever periodDate changes, fetch/update data
     fetchData();
   }, [periodDate]);
 
