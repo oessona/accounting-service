@@ -1,0 +1,304 @@
+/* Basic Reset and Body Style */
+
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+  background-color: #f7f7fa; /* A light gray for contrast */
+  font-weight: 400;
+  line-height: 24px;
+  display: flex;
+}
+
+button,
+[type="button"],
+[type="submit"] {
+  -webkit-appearance: none;
+  appearance: none;
+  background: none;
+  border: none;
+  box-shadow: none;
+  -webkit-tap-highlight-color: transparent;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  box-sizing: border-box;
+}
+
+/* sidebar styles */
+/* Sidebar Container */
+.sidebar {
+  width: 288px; /* w-xs equivalent, can be adjusted */
+  height: 100vh;
+  background-color: #ffffff;
+  border-right: 1px solid #e5e7eb; /* border-gray-200 */
+  padding: 24px; /* p-6 */
+  box-sizing: border-box;
+  border-radius: 12px;
+}
+
+/* Sidebar Header Section */
+.sidebar-header {
+  border-bottom: 1px solid #9ca3af; /* border-gray-400 */
+  padding-bottom: 24px; /* pb-6 */
+  width: 100%;
+}
+
+.sidebar-title {
+  color: #374151; /* text-gray-700 */
+  font-weight: 600; /* font-semibold */
+  margin: 0 0 24px 0; /* Cleared default margins and added mb-6 */
+  font-size: 1.5rem; /* text-2xl */
+  text-align: center;
+}
+
+/* Navigation Section */
+.sidebar-nav {
+  margin-top: 40px; /* mt-10 */
+}
+
+/* Styling for each navigation link */
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 12px; /* gap-3 */
+  color: #000000; /* text-black */
+  height: 80px; /* h-20 */
+  border-radius: 0.75rem; /* rounded-xl */
+  padding: 16px; /* py-4 px-4 */
+  text-decoration: none;
+  font-weight: 600; /* font-semibold */
+  font-size: 1.125rem; /* text-lg */
+  transition: color 0.2s ease-in-out, background-color 0.2s ease-in-out;
+  margin-top: 24px; /* space-y-6 */
+}
+.sidebar-nav a:first-child {
+  margin-top: 0;
+}
+
+.nav-link:hover {
+  color: #4b5563; /* hover:text-gray-600 */
+}
+
+/* Active Link Styles */
+.nav-link.active {
+  background-color: #d1fae5; /* bg-green-100 */
+  color: #059669; /* text-green-600 */
+}
+
+.nav-link.active:hover {
+  color: #10b981 !important; /* hover:!text-green-500 */
+}
+
+/* Logout Link Specific Styles */
+.nav-link.logout {
+  margin-top: 40px; /* mt-10 from the React component */
+  color: #f87171; /* text-red-400 */
+}
+
+.nav-link.logout:hover {
+  color: #dc2626; /* hover:text-red-600 */
+}
+
+/* DASHBOARD STYLES */
+/*        */
+/*                 */
+/*                       */
+.main {
+  display: flex;
+  flex-direction: column;
+  padding: 48px;
+}
+.titles {
+  margin-bottom: 40px;
+}
+.dashboard__title {
+  font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 40px;
+  margin-bottom: 10px;
+}
+.dashboard__welcoming {
+  color: #6b7280;
+  font-size: 18px;
+  line-height: 24px;
+  margin-bottom: 20px;
+}
+.dashboard__container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 36px;
+}
+.card__container {
+  display: flex;
+  padding: 10px 50px;
+  gap: 24px;
+}
+
+.dashboard__card {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  padding: 32px;
+  gap: 24px;
+  min-width: 300px;
+  min-height: 200px;
+  background-color: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.dashboard__card-title {
+  line-height: 20px;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.dashboard__card-price {
+  font-weight: 700;
+  font-size: 24px;
+  line-height: 32px;
+}
+
+.dashboard__card-percent {
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 20px;
+}
+
+.dashboard__income-percent {
+  color: #10b981;
+}
+
+.dashboard__expenses-percent {
+  color: #ef4444;
+}
+
+.dashboard__taxes-percent {
+  color: #3b82f6;
+}
+
+.transaction-card {
+  background-color: #ffffff;
+  padding: 32px 32px 80px;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 948px;
+}
+
+#transaction-form {
+  display: flex;
+  flex-direction: column;
+  margin-top: 96px;
+  gap: 96px;
+  position: relative;
+}
+
+.transaction__title {
+  font-size: 18px;
+  font-weight: 600;
+  margin-top: 0;
+  margin-bottom: 24px;
+}
+
+.transaction__inputs {
+  display: flex;
+  gap: 48px; /* Space between input fields */
+}
+
+.input__group {
+  flex: 1; /* Each group takes up equal space */
+  display: flex;
+  flex-direction: column;
+}
+
+.input__group label {
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+/* Common styles for all input types */
+.input__group input,
+.input__group select {
+  height: 50px;
+  border: 1px solid #d1d5db;
+  border-radius: 12px;
+  padding: 12px 16px;
+  font-size: 16px;
+  width: 100%;
+  box-sizing: border-box; /* Important for padding */
+}
+
+.input__group input::placeholder {
+  color: #9ca3af;
+}
+
+/* Style for the select arrow */
+.input__group select {
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg width='20' height='20' viewBox='0 0 20 20' fill='none' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M6.175 7.15002L10 10.975L13.825 7.15002L15 8.33336L10 13.3334L5 8.33336L6.175 7.15002Z' fill='%236B7280'/%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  background-size: 1.25em;
+}
+/* Add this to your style.css file */
+.feedback {
+  width: 100%;
+  padding: 12px;
+  margin-top: 16px;
+  border-radius: 8px;
+  font-weight: 500;
+  text-align: center;
+  display: none; /* Hidden by default */
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+  position: absolute;
+  top: 40%;
+}
+
+.feedback.show {
+  display: block;
+  opacity: 1;
+}
+
+.feedback--success {
+  background-color: #d1fae5; /* Light green */
+  color: #065f46; /* Dark green */
+}
+
+.feedback--error {
+  background-color: #fee2e2; /* Light red */
+  color: #991b1b; /* Dark red */
+}
+
+.btn {
+  background-color: #10b981;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  padding: 12px 16px;
+  color: white;
+  cursor: pointer;
+  font-family: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI",
+    Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji",
+    "Segoe UI Emoji", "Segoe UI Symbol";
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 24px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.2s, box-shadow 0.2s, border-color 0.2s;
+  max-width: 170px;
+}
