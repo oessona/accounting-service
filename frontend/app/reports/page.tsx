@@ -59,19 +59,19 @@ export default function ReportsPage() {
   }
 
   return (
-    <div className="min-h-screen flex text-xl flex-1 max-w-7xl">
-      <main className="flex-1 p-6 ml-12">
-        <header className="mb-12">
-          <h1 className="mt-8 text-4xl font-semibold text-gray-800">
+    <div className="min-h-screen flex text-base md:text-xl flex-1 max-w-7xl w-full py-10 md:py-0">
+      <main className="flex-1 p-4 md:p-6 md:ml-12">
+        <header className="mb-8 md:mb-12">
+          <h1 className="mt-4 md:mt-8 text-3xl md:text-4xl font-semibold text-gray-800">
             Reports
           </h1>
         </header>
 
-        <div className="ml-12">
-          <section className="mb-10 font-semibold flex flex-col bg-white rounded-lg p-8 h-72 shadow-md shadow-gray-400 border border-gray-200">
-            <h2 className="text-gray-700 mb-8">Generate Report</h2>
-            <form onSubmit={handleGenerate} className="flex gap-8 ml-10 items-end">
-              <div className="w-xs">
+        <div className="md:ml-12">
+          <section className="mb-6 md:mb-10 font-semibold flex flex-col bg-white rounded-lg p-4 md:p-8 min-h-[18rem] shadow-md shadow-gray-400 border border-gray-200">
+            <h2 className="text-gray-700 mb-6 md:mb-8">Generate Report</h2>
+            <form onSubmit={handleGenerate} className="flex flex-col md:flex-row md:flex-wrap gap-4 items-start md:items-end">
+              <div className="w-full lg:max-w-xs">
                 <label className="block text-sm text-gray-600 mb-2">Type</label>
                 <select
                   value={reportType}
@@ -84,7 +84,7 @@ export default function ReportsPage() {
                 </select>
               </div>
 
-              <div className="w-xs">
+              <div className="lg:w-xs">
                 <label className="block text-sm text-gray-600 mb-3">Time</label>
                 <MonthYearPicker
                   value={periodDate}
@@ -104,12 +104,12 @@ export default function ReportsPage() {
             </form>
           </section>
 
-          <section className="bg-white rounded-lg p-10 shadow-md shadow-gray-400 border border-gray-200">
-            <h3 className="font-semibold text-gray-800 mb-6">
+          <section className="bg-white rounded-lg p-4 md:p-10 shadow-md shadow-gray-400 border border-gray-200">
+            <h3 className="font-semibold text-gray-800 mb-4 md:mb-6 text-lg md:text-xl">
               Monthly Profit &amp; Loss — {data.monthLabel}
             </h3>
 
-            <div className="flex gap-8 items-end h-80 mb-6 mt-6 border-b border-gray-600">
+            <div className="relative w-full flex gap-8 md:gap-8 items-center justify-center md:items-end h-auto md:h-[400px] mb-4 mt-4">
               <Bar
                 label="Total Income"
                 value={data.income}
@@ -130,10 +130,11 @@ export default function ReportsPage() {
               />
             </div>
 
-            <h4 className="font-semibold text-gray-700 mb-4 mt-32">
+            <div className="w-full border-t border-gray-200 md:border-gray-600 -mt-4 mb-8"></div>
+            <h4 className="font-semibold text-gray-700 mb-3 md:mb-4 text-lg md:text-xl">
               Key Insights
             </h4>
-            <ul className="text-md text-gray-600 space-y-2 ml-10">
+            <ul className="text-sm md:text-md text-gray-600 space-y-2 ml-4 md:ml-10">
               <li>• Your highest expense category this month was Rent ($1,200).</li>
               <li>• Your tax estimation is based on the 25% rate set in your profile.</li>
               <li>• Compliance Tip: Remember to categorize all receipts for Q4.</li>
@@ -161,17 +162,17 @@ function Bar({
     Math.min(100, Math.round((value / maxBar) * 100))
   );
   return (
-    <div className="flex-1 text-center relative h-4/5">
-      <div className="h-full flex items-center flex-col justify-end">
-        <div className="text-2xl text-gray-700 mb-5 font-semibold">
+    <div className="md:flex-1 w-20 text-center relative h-[200px] md:h-full">
+      <div className="h-full flex flex-col justify-end">
+        <div className="text-xl md:text-2xl text-gray-700 mb-3 font-semibold">
           ${value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
         </div>
         <div
-          className={`mx-auto w-40 rounded-t-xl ${color}`}
-          style={{ height: `${heightPct}%`, minHeight: '16px' }}
+          className={`mx-auto w-full md:w-40 rounded-t-xl transition-all duration-300 ${color}`}
+          style={{ height: `${heightPct}%`, minHeight: '24px' }}
         />
       </div>
-      <div className="mt-2 text-md text-gray-500 absolute left-1/2 -translate-x-1/2">
+      <div className="mt-3 text-sm md:text-md text-gray-500">
         {label}
       </div>
     </div>
@@ -195,7 +196,7 @@ const CustomInput = forwardRef(
       type="button"
       ref={ref}
       onClick={onClick}
-      className="w-80 border border-gray-600 rounded-xl px-4 py-5 bg-white text-sm text-gray-800 text-left"
+      className="w-full !w-80 border border-gray-600 rounded-xl px-4 py-5 bg-white text-sm text-gray-800 text-left"
     >
       {value || placeholder}
     </button>
@@ -217,6 +218,7 @@ function MonthYearPicker({
         onChange={date => {
             onChange(date);
         }}
+        className="flex-1 w-full"
         dateFormat="yyyy-MM"
         showMonthYearPicker
         customInput={<CustomInput placeholder={placeholder} />}

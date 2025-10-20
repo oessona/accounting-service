@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Financial Registration</title>
+    <style>
+      *,
+      *::before,
+      *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      html {
+        height: 100%;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: "Inter", ui-sans-serif, system-ui, -apple-system,
+          "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans",
+          "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+        font-size: 16px;
+        font-weight: normal;
+        line-height: 1.5;
+        background-color: #f7f7fa;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      button,
+      [type="button"],
+      [type="submit"] {
+        -webkit-appearance: none;
+        appearance: none;
+        background: none;
+        border: none;
+        box-shadow: none;
+        -webkit-tap-highlight-color: transparent;
+        font: inherit;
+        color: inherit;
+        cursor: pointer;
+        box-sizing: border-box;
+      }
+
+      .register__body {
+        width: 100%;
+        max-width: 450px;
+        margin: 0 16px;
+        padding: 40px;
+        background-color: #ffffff;
+        border-radius: 16px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 32px;
+        gap: 24px; /* Adjusted gap for tighter layout */
+      }
+
+      .register__title {
+        font-size: 32px;
+        font-weight: 700;
+        color: #111827;
+        line-height: 40px;
+        margin-bottom: 8px;
+      }
+
+      .register__form {
+        position: relative;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 32px; 
+      }
+
+      .register__input,
+      .register__button {
+        display: block;
+        box-sizing: border-box;
+        width: 100%;
+      }
+
+      .register__input {
+        border: #6b7280 1px solid;
+        border-radius: 12px;
+        padding: 12px 16px;
+        font-family: "Inter", ui-sans-serif, system-ui, -apple-system,
+          "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans",
+          "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+        font-weight: 400;
+        line-height: 24px;
+        transition: border-color 0.2s, box-shadow 0.2s;
+      }
+
+      .register__input:focus,
+      .register__input:focus-visible {
+        border-color: #3b82f6;
+        outline: none;
+        box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.12);
+      }
+
+      .register__input--error {
+        border-color: #ef4444 !important;
+      }
+
+      .register__input--error:focus,
+      .register__input--error:focus-visible {
+        box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.12);
+      }
+
+      .register__error {
+        color: #ef4444;
+        font-size: 14px;
+        line-height: 20px;
+        text-align: center;
+        width: 100%;
+        display: none; /* Initially hidden */
+        margin-top: -8px; /* Adjust spacing */
+        margin-bottom: 8px;
+        text-align: right;
+        position: absolute;
+        top: 75%;
+      }
+
+      .register__button {
+        background-color: #10b981;
+        border: 1px solid transparent;
+        border-radius: 12px;
+        padding: 12px 16px;
+        color: white;
+        cursor: pointer;
+        font-family: "Inter", ui-sans-serif, system-ui, -apple-system,
+          "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans",
+          "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+        font-size: 18px;
+        font-weight: 600;
+        line-height: 24px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: background-color 0.2s, box-shadow 0.2s,
+          border-color 0.2s;
+        margin-top: 8px; /* Add some space above the button */
+      }
+
+      .register__button:hover {
+        background-color: #059669;
+      }
+
+      .register__button:active {
+        background-color: #047857;
+      }
+
+      .register__button:focus,
+      .register__button:focus-visible {
+        outline: none;
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.12);
+      }
+
+      .register__helper {
+        color: #4b5563;
+      }
+
+      .register__login {
+        text-decoration: none;
+        color: #10b981;
+        margin-left: 3px;
+        font-weight: 500;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="register__body">
+      <h1 class="register__title">Signup</h1>
+      <form class="register__form" id="registerForm">
+        <input
+          id="emailInput"
+          class="register__input"
+          type="email"
+          placeholder="Enter your email..."
+          required
+        />
+        <input
+          id="passwordInput"
+          class="register__input"
+          type="password"
+          placeholder="Create a password..."
+          required
+        />
+        <input
+          id="confirmPasswordInput"
+          class="register__input"
+          type="password"
+          placeholder="Confirm your password"
+          required
+        />
+        <p id="registerError" class="register__error">
+          Passwords don't match
+        </p>
+        <button class="register__button" type="submit">Signup</button>
+      </form>
+      <p class="register__helper">
+        Already have an account?
+        <a class="register__login" href="#">Log in</a>
+      </p>
+    </div>
+
+    <script>
+      // Get references to the DOM elements
+      const registerForm = document.getElementById("registerForm");
+      const emailInput = document.getElementById("emailInput");
+      const passwordInput = document.getElementById("passwordInput");
+      const confirmPasswordInput = document.getElementById("confirmPasswordInput");
+      const registerError = document.getElementById("registerError");
+
+      // This function now just clears the visual error state
+      function clearErrorState() {
+        registerError.style.display = "none";
+        passwordInput.classList.remove("register__input--error");
+        confirmPasswordInput.classList.remove("register__input--error");
+      }
+
+      // Add an event listener to each password input.
+      // When the user starts typing in either box, hide the error message.
+      passwordInput.addEventListener("input", clearErrorState);
+      confirmPasswordInput.addEventListener("input", clearErrorState);
+
+      registerForm.addEventListener("submit", (event) => {
+        // 1. Prevent the form's default submission behavior
+        event.preventDefault();
+
+        // 2. We no longer need to reset errors here,
+        //    as the 'input' event listener above handles it.
+
+        // 3. Get the values from the password fields
+        const password = passwordInput.value;
+        const confirmPassword = confirmPasswordInput.value;
+
+        // 4. Check if the passwords match
+        if (password !== confirmPassword) {
+          // If they don't match, show the error and style both boxes
+          registerError.style.display = "block";
+          passwordInput.classList.add("register__input--error");
+          confirmPasswordInput.classList.add("register__input--error");
+        } else if (!password) {
+          // Optional: handle case where fields are empty on submit
+          registerError.innerText = "Password cannot be empty";
+          registerError.style.display = "block";
+          passwordInput.classList.add("register__input--error");
+          confirmPasswordInput.classList.add("register__input--error");
+        }
+        else {
+          // If they match, registration is successful (simulation)
+          clearErrorState(); // Ensure no errors are showing
+          alert("Registration successful!");
+          // In a real application, you would now send the data to your backend.
+        }
+      });
+    </script>
+  </body>
+</html>
