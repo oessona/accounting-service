@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Financial Login</title>
+    <style>
+      *,
+      *::before,
+      *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      html {
+        height: 100%;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: "Inter", ui-sans-serif, system-ui, -apple-system,
+          "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans",
+          "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+        font-size: 16px;
+        font-weight: normal;
+        line-height: 1.5;
+        background-color: #f7f7fa;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      button,
+      [type="button"],
+      [type="submit"] {
+        -webkit-appearance: none;
+        appearance: none;
+        background: none;
+        border: none;
+        box-shadow: none;
+        -webkit-tap-highlight-color: transparent;
+        font: inherit;
+        color: inherit;
+        cursor: pointer;
+        box-sizing: border-box;
+      }
+
+      .login__body {
+        width: 100%;
+        max-width: 450px;
+        margin: 0 16px;
+        padding: 40px;
+        background-color: #ffffff;
+        border-radius: 16px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 32px;
+        gap: 32px;
+      }
+
+      .login__title {
+        font-size: 32px;
+        font-weight: 700;
+        color: #111827;
+        line-height: 40px;
+        margin-bottom: 0; /* Adjusted from 24px because of gap */
+      }
+
+      .login__form {
+        position: relative;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 32px; /* Adjusted from 32px */
+      }
+
+      .login__input,
+      .login__button {
+        display: block;
+        box-sizing: border-box;
+        width: 100%; /* Made responsive */
+      }
+
+      .login__input {
+        border: #6b7280 1px solid;
+        border-radius: 12px;
+        padding: 12px 16px;
+        font-family: "Inter", ui-sans-serif, system-ui, -apple-system,
+          "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans",
+          "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+        font-weight: 400;
+        line-height: 24px;
+        transition: border-color 0.2s, box-shadow 0.2s;
+      }
+
+      .login__input:focus,
+      .login__input:focus-visible {
+        border-color: #3b82f6;
+        outline: none;
+        box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.12);
+      }
+
+      .login__input--error {
+        border-color: #ef4444 !important;
+      }
+
+      .login__input--error:focus,
+      .login__input--error:focus-visible {
+        box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.12);
+      }
+
+      .login__error {
+        position: absolute;
+        top: 70%;
+        color: #ef4444;
+        font-size: 14px;
+        line-height: 20px;
+        text-align: center;
+        width: 100%;
+        margin-top: -12px;
+        margin-bottom: -12px;
+        text-align: right;
+        display: none; /* Changed from hide class logic */
+      }
+
+      .login__button {
+        background-color: #10b981;
+        border: 1px solid transparent;
+        border-radius: 12px;
+        padding: 12px 16px;
+        color: white;
+        cursor: pointer;
+        font-family: "Inter", ui-sans-serif, system-ui, -apple-system,
+          "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans",
+          "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+        font-size: 18px;
+        font-weight: 600;
+        line-height: 24px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: background-color 0.2s, box-shadow 0.2s, border-color 0.2s;
+      }
+
+      .login__button:hover {
+        background-color: #059669;
+      }
+
+      .login__button:active {
+        background-color: #047857;
+      }
+
+      .login__button:focus,
+      .login__button:focus-visible {
+        outline: none;
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.12);
+      }
+
+      .login__helper {
+        color: #4b5563;
+      }
+
+      .login__signup {
+        text-decoration: none;
+        color: #10b981;
+        margin-left: 3px;
+        font-weight: 500;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="login__body">
+      <h1 class="login__title">Login</h1>
+      <form class="login__form" id="loginForm">
+        <!-- Added ID -->
+        <input
+          id="emailInput"
+          class="login__input"
+          type="email"
+          placeholder="Enter your email..."
+          required
+        />
+        <!-- Added ID, type, required -->
+        <input
+          id="passwordInput"
+          class="login__input"
+          type="password"
+          placeholder="Enter your password..."
+          required
+        />
+        <!-- Added ID, type, required -->
+        <p id="loginError" class="login__error">Invalid email or password</p>
+        <!-- Added ID -->
+        <button class="login__button" type="submit">Login</button>
+      </form>
+      <p class="login__helper">
+        Don't have an account? <a class="login__signup" href="#">Sign up</a>
+      </p>
+    </div>
+
+    <script>
+      // Get references to the DOM elements
+      const loginForm = document.getElementById("loginForm");
+      const emailInput = document.getElementById("emailInput");
+      const passwordInput = document.getElementById("passwordInput");
+      const loginError = document.getElementById("loginError");
+
+      // Add a 'submit' event listener to the form
+      loginForm.addEventListener("submit", (event) => {
+        // 1. Prevent the form's default submission behavior (which reloads the page)
+        event.preventDefault();
+
+        // 2. Reset previous error states
+        loginError.style.display = "none";
+        emailInput.classList.remove("login__input--error");
+        passwordInput.classList.remove("login__input--error");
+
+        // 3. Get the values from the input fields
+        const email = emailInput.value;
+        const password = passwordInput.value;
+
+        // --- SIMULATE BACKEND AUTHENTICATION ---
+        // In a real application, you would send these values to your backend.
+        // For this example, we'll use a hardcoded correct email and password.
+
+        const CORRECT_EMAIL = "test@example.com";
+        const CORRECT_PASSWORD = "password123";
+      function closeError() { 
+  loginError.style.display = "none";
+  emailInput.classList.remove("login__input--error");
+  passwordInput.classList.remove("login__input--error");
+  // don't clear input values here
+}
+
+if (email === CORRECT_EMAIL && password === CORRECT_PASSWORD) {
+  alert("Login successful!");
+  // window.location.href = '/dashboard';
+} else {
+  // Show the error message
+  loginError.style.display = "block";
+  emailInput.classList.add("login__input--error");
+  passwordInput.classList.add("login__input--error");
+  document.querySelectorAll(".login__input").forEach(input => {
+    input.addEventListener("click", () => {
+      input.value = "";  
+    });
+  });
+  // Add click listener so clicking the card will just hide the error (not clear inputs)
+  document.querySelector(".login__body").addEventListener("click", closeError, { once: true });
+}
+
+
+      });
+    </script>
+  </body>
+</html>
