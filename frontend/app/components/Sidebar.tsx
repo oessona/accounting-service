@@ -3,37 +3,135 @@
 import { useEffect, useState } from "react";
 
 const Links = [
-    { name: 'Transactions', href: '/transations' },
+    { name: 'Transactions', href: '/transactions' },
     { name: 'Reports', href: '/reports' },
     { name: 'User', href: '/user' },
 ]
 
 export default function Sidebar() {
-
     const [pathName, setPathName] = useState('');
+    const [isCollapsed, setIsCollapsed] = useState(false);
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
     useEffect(() => {
         setPathName(window.location.pathname);
+        const handleResize = () => {
+            if (window.innerWidth > 768) {
+                setIsMobileMenuOpen(false);
+            }
+        };
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
     }, []);
 
     return (
-        <aside className="w-xs bg-white border-r border-gray-200 p-6">
-            <div className="border-gray-400 border-b pb-6 w-full">
-                <h2 className="text-gray-700 font-semibold mb-6 text-2xl w-full text-center">Financial</h2>
-            </div>
-            <nav className="space-y-6 font-semibold mt-10 text-lg">
-                {Links.map(link => (
-                    <a
-                        key={link.name}
-                        href={link.href}
-                        className={`flex items-center gap-3 text-black h-20 hover:text-gray-600 rounded-xl py-4 px-4 ${pathName === link.href ? "bg-green-100 text-green-600 hover:!text-green-500" : ''}`}
+        <>
+            {/* Mobile menu button */}
+            <button 
+                className="md:hidden fixed top-4 left-4 z-50 p-2 rounded-md bg-white shadow-md"
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            >
+                <svg 
+                    xmlns="http://www.w3.org/2000/svg" 
+                    width="24" 
+                    height="24" 
+                    viewBox="0 0 24 24" 
+                    fill="none" 
+                    stroke="currentColor" 
+                    strokeWidth="2" 
+                    strokeLinecap="round" 
+                    strokeLinejoin="round"
+                >
+                    {isMobileMenuOpen ? (
+                        <path d="M18 6 6 18M6 6l12 12"/>
+                    ) : (
+                        <path d="M3 12h18M3 6h18M3 18h18"/>
+                    )}
+                </svg>
+            </button>
+
+            {/* Overlay for mobile */}
+            {isMobileMenuOpen && (
+                <div 
+                    className="md:hidden fixed inset-0 bg-black bopacity-50 z-40"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                />
+            )}
+
+            <aside className={`
+                fixed md:static
+                top-0 bottom-0
+                bg-white border-r border-gray-200
+                transition-all duration-300 ease-in-out
+                ${isMobileMenuOpen ? 'left-0' : '-left-full'}
+                md:left-0
+                ${isCollapsed ? 'w-20' : 'w-64'}
+                p-6 z-50
+            `}>
+                <div className="flex items-center justify-between border-gray-400 border-b pb-6 w-full">
+                    <h2 className={`text-gray-700 font-semibold text-2xl transition-opacity duration-200
+                        ${isCollapsed ? 'opacity-0 hidden' : 'opacity-100'}
+                    `}>
+                        Financial
+                    </h2>
+                    <button
+                        onClick={() => setIsCollapsed(!isCollapsed)}
+                        className="hidden md:block p-2 rounded-full hover:bg-gray-100"
                     >
-                        <Icon name={link.name} />
-                        <span>{link.name}</span>
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="20"
+                            height="20"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                        >
+                            {isCollapsed ? (
+                                <path d="m9 18 6-6-6-6"/>
+                            ) : (
+                                <path d="m15 18-6-6 6-6"/>
+                            )}
+                        </svg>
+                    </button>
+                </div>
+                <nav className="space-y-6 font-semibold mt-10 text-lg">
+                    {Links.map(link => (
+                        <a
+                            key={link.name}
+                            href={link.href}
+                            className={`flex items-center gap-3 text-black hover:text-gray-600 rounded-xl py-4 px-4
+                                ${pathName === link.href ? "bg-green-100 text-green-600 hover:!text-green-500" : ''}
+                                ${isCollapsed ? 'justify-center' : ''}
+                            `}
+                        >
+                            <Icon name={link.name} />
+                            <span className={`transition-opacity duration-200
+                                ${isCollapsed ? 'opacity-0 hidden' : 'opacity-100'}
+                            `}>
+                                {link.name}
+                            </span>
+                        </a>
+                    ))}
+                    <a href="/#" className={`mt-10 text-red-400 hover:text-red-600 flex font-semibold items-center gap-3 p-4 cursor-pointer
+                        ${isCollapsed ? 'justify-center' : ''}
+                    `}>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="m16 17 5-5-5-5"/>
+                            <path d="M21 12H9"/>
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                        </svg>
+                        <span className={`transition-opacity duration-200
+                            ${isCollapsed ? 'opacity-0 hidden' : 'opacity-100'}
+                        `}>
+                            Logout
+                        </span>
                     </a>
-                ))}
-                <a href="/#" className="mt-10 text-red-400 hover:text-red-600 flex font-semibold items-center gap-3 p-4 cursor-pointer"> <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/></svg> Logout</a>
-            </nav>
-        </aside>
+                </nav>
+            </aside>
+        </>
     )
 }
 

@@ -1,98 +1,101 @@
-'use client'; // This is required for components that use hooks
+"use client";
 
-import { useState, FormEvent } from 'react';
-import { useRouter } from 'next/navigation'; // For redirecting after login
-import styles from './login.module.css'; // Import the CSS module
+import React, { useState, FormEvent, JSX } from "react";
+import Link from "next/link";
 
-export default function LoginPage() {
-  const router = useRouter();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+export default function LoginPage(): JSX.Element {
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault(); // Prevent page reload
-    setIsLoading(true);
-    setError(null); // Reset error on new submission
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-    // Your Laravel backend is likely running on http://127.0.0.1:8000
-    // The endpoint is /api/login from your api.php
-    const apiUrl = 'http://127.0.0.1:8000/api/login';
+  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setError(null);
+    setLoading(true);
+
+    // Email validation regex
+    
+    if (!emailRegex.test(email)) {
+      setError("Invalid email format");
+      setLoading(false);
+      return;
+    }
+
+    // Simple password validation (example: must be at least 6 characters)
+    if (password.length < 6) {
+      setError("Password must be at least 6 characters");
+      setLoading(false);
+      return;
+    }
 
     try {
-      const response = await fetch(apiUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        // Handle validation errors or other server errors
-        // Laravel's default validation exception sends errors in `data.errors`
-        const errorMessage = data.message || 'Invalid credentials';
-        setError(errorMessage);
-        throw new Error(errorMessage);
-      }
-
-      // --- LOGIN SUCCESSFUL ---
-      console.log('Login successful:', data);
-      
-      // Store the token for future authenticated requests
-      // localStorage is a simple way, but for production consider secure alternatives
-      localStorage.setItem('auth_token', data.token);
-
-      // Redirect to a dashboard or home page
-      router.push('/dashboard'); // Change '/dashboard' to your desired route
-
+      await new Promise((r) => setTimeout(r, 700));
+      console.log("submit", { email, password });
     } catch (err) {
-      console.error('Login failed:', err);
-      // The error state is already set if it was a response error
-      if (!error) {
-        setError('An unexpected error occurred. Please try again.');
-      }
+      setError("Login failed");
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
-  };
+  }
 
   return (
-    <div className={styles.pageContainer}> {/* Added a container for centering */}
-      <div className={styles.login__body}>
-        <h1 className={styles.login__title}>Login</h1>
-        <form className={styles.login__form} onSubmit={handleSubmit}>
-          <input
-            className={`${styles.login__input} ${error ? styles['login__input--error'] : ''}`}
-            type="email"
-            placeholder="Enter your email..."
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            disabled={isLoading}
-          />
-          <input
-            className={`${styles.login__input} ${error ? styles['login__input--error'] : ''}`}
-            type="password"
-            placeholder="Enter your password..."
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            disabled={isLoading}
-          />
-          {/* Display API error message */}
-          {error && <p className={styles.login__error_visible}>{error}</p>}
-          
-          <button className={styles.login__button} type="submit" disabled={isLoading}>
-            {isLoading ? 'Logging in...' : 'Login'}
+    <div className="w-full min-h-screen bg-gray-100 flex items-center justify-center p-6">
+      <div className="w-full max-w-sm bg-white rounded-xl border border-gray-200 shadow-md p-6">
+        <h1 className="text-center text-2xl font-semibold mb-6 text-black">Login</h1>
+
+        <form onSubmit={handleSubmit} className="space-y-4 text-gray-600">
+          <div>
+            <label htmlFor="email" className="sr-only">
+              Email
+            </label>
+            <input
+              id="email"
+              name="email"
+              autoComplete="email"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Enter your email..."
+              className={`w-full border ${error && email && !emailRegex.test(email) ? 'border-red-600' : 'border-gray-300'} rounded-md px-3 py-2 text-sm placeholder-gray-400 focus:outline-none focus:ring-2 `}
+            />
+          </div>
+
+          <div>
+            <label htmlFor="password" className="sr-only">
+              Password
+            </label>
+            <input
+              id="password"
+              name="password"
+              type="password"
+              autoComplete="current-password"
+              required
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Enter your password..."
+              className={`w-full border ${error && password.length < 6 ? 'border-red-600' : 'border-gray-300'} rounded-md px-3 py-2 text-sm placeholder-gray-400 focus:outline-none focus:ring-2 `}
+            />
+          </div>
+
+          {error && <p className="text-sm text-red-600">{error}</p>}
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full bg-emerald-600 hover:bg-emerald-700 disabled:opacity-60 text-white font-medium py-2 rounded-md transition"
+          >
+            {loading ? "Logging in..." : "Login"}
           </button>
         </form>
-        <p className={styles.login__helper}>
-          Don't have an account? <a className={styles.login__signup} href="/register">Sign up</a>
+
+        <p className="text-center text-sm text-gray-600 mt-4">
+          Don't have an account?{" "}
+          <Link href="/signup" className="text-green-600 hover:underline">
+            Sign up
+          </Link>
         </p>
       </div>
     </div>
