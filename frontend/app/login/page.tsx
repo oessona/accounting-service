@@ -1,9 +1,11 @@
 "use client";
 
-import React, { useState, FormEvent, JSX } from "react";
+import React, { useState, FormEvent, JSX, useEffect } from "react";
 import Link from "next/link";
+import { useSearchParams } from 'next/navigation';
 
 export default function LoginPage(): JSX.Element {
+  const searchParams = useSearchParams();
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
@@ -32,11 +34,22 @@ export default function LoginPage(): JSX.Element {
     }
 
     try {
+      // Simulate API call
       await new Promise((r) => setTimeout(r, 700));
-      console.log("submit", { email, password });
+      
+      // For development, we'll use a mock successful login
+      // In production, this would be replaced with a real API call
+      const token = 'mock_token';
+      
+      // Store in both localStorage and cookies for SSR support
+      localStorage.setItem('auth_token', token);
+      document.cookie = `auth_token=${token}; path=/; max-age=86400`; // 24 hours
+      
+      // Get the redirect URL from the search params or default to dashboard
+      const redirectTo = searchParams.get('redirect') || '/dashboard';
+      window.location.href = redirectTo;
     } catch (err) {
       setError("Login failed");
-    } finally {
       setLoading(false);
     }
   }
