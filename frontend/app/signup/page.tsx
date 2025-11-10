@@ -64,9 +64,9 @@ export default function SignUpPage(): JSX.Element {
   };
 
   return (
-    <div className="w-full min-h-screen bg-gray-100 flex items-center justify-center p-6">
-      <div className="w-full max-w-sm bg-white rounded-xl border border-gray-200 shadow-md p-6">
-          <h1 className="text-center text-2xl font-semibold mb-6 text-black">Sign Up</h1>
+    <main className="w-full min-h-screen bg-gray-100 flex items-center justify-center px-4 sm:px-6 lg:px-8 py-12">
+      <div className="w-full max-w-md bg-white rounded-xl border border-gray-200 shadow-md p-6 sm:p-8">
+          <h1 className="text-center text-2xl sm:text-3xl font-semibold mb-6 text-gray-900">Sign Up</h1>
 
           <form onSubmit={onSubmit} className="space-y-4 text-gray-600">
             <div>
@@ -80,7 +80,7 @@ export default function SignUpPage(): JSX.Element {
                 value={form.email}
                 onChange={onChange}
                 placeholder="Enter your email..."
-                className={`w-full border ${error && form.email && !emailRegex.test(form.email) ? 'border-red-600' : 'border-gray-300'} rounded-md px-3 py-2 text-sm placeholder-gray-400 focus:outline-none focus:ring-2`}
+                className={`w-full border ${error && form.email && !emailRegex.test(form.email) ? 'border-red-600' : 'border-gray-300'} rounded-md px-3 py-2 text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500`}
                 required
               />
             </div>
@@ -114,32 +114,40 @@ export default function SignUpPage(): JSX.Element {
                 value={form.confirm}
                 onChange={onChange}
                 placeholder="Confirm your password"
-                className={`w-full border ${error && form.password !== form.confirm ? 'border-red-600' : 'border-gray-300'} rounded-md px-3 py-2 text-sm placeholder-gray-400 focus:outline-none focus:ring-2`}
+                className={`w-full border ${error && form.password !== form.confirm ? 'border-red-600' : 'border-gray-300'} rounded-md px-3 py-2 text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500`}
                 required
               />
             </div>
 
-            {error && <p className="text-sm text-red-600">{error}</p>}
-            {success && <p className="text-sm text-green-600">{success}</p>}
+            {error && (
+              <p className="text-sm text-red-600 bg-red-50 p-2 rounded-md">
+                {error}
+              </p>
+            )}
+            {success && (
+              <p className="text-sm text-green-600 bg-green-50 p-2 rounded-md">
+                {success}
+              </p>
+            )}
 
             <button
               type="submit"
-              className={`w-full mt-2 inline-flex items-center justify-center bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2 rounded-md shadow-sm transition-colors ${
+              className={`w-full mt-2 inline-flex items-center justify-center bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2.5 rounded-md shadow-sm transition-colors ${
                 loading ? "opacity-70 cursor-wait" : ""
               }`}
               disabled={loading}
             >
-              {loading ? "Signing up..." : "Signup"}
+              {loading ? "Signing up..." : "Sign up"}
             </button>
           </form>
 
-          <p className="text-center text-xs text-gray-500 mt-4">
+          <p className="text-center text-sm text-gray-500 mt-6">
             Already have an account?{" "}
-            <Link href="/login" className="text-green-600 hover:underline">
+            <Link href="/login" className="text-emerald-600 hover:text-emerald-700 hover:underline font-medium">
               Login
             </Link>
           </p>
       </div>
-    </div>
+    </main>
   );
 }
