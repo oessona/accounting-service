@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Navigation from '../components/Navigation';
+import AccountMenu from '../components/acc_menu';
 import { useRouter } from 'next/navigation';
 
 function formatDate(date: Date): string {
@@ -43,15 +44,7 @@ export default function AuthenticatedLayout({
                 Today's Date<br />
                 <span className="font-medium text-gray-900">{formatDate(new Date())}</span>
               </div>
-              <button
-                onClick={() => {
-                  localStorage.removeItem('auth_token');
-                  router.push('/login');
-                }}
-                className="text-sm text-gray-600 hover:text-gray-900"
-              >
-                Logout
-              </button>
+              <AccountMenu />
             </div>
           </div>
 
