@@ -121,13 +121,7 @@ export default function DashboardPage() {
 
         {/* Metrics Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-          {/* SKUs */}
-          <div className="bg-white rounded-lg shadow-sm p-6">
-            <div className="flex flex-col">
-              <p className="text-sm text-gray-600 mb-1">Unique SKUs in inventory</p>
-              <h2 className="text-3xl font-semibold text-gray-900">{10}</h2>
-            </div>
-          </div>
+
 
           {/* Inventory Value */}
           <div className="bg-white rounded-lg shadow-sm p-6">

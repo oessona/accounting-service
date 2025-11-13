@@ -14,7 +14,6 @@ interface Transaction {
   timestamp: string;
   name: string;
   type: 'receiving' | 'shipping' | 'adjustment';
-  sku: string;
   category: string;
   quantity: number;
 }
@@ -22,7 +21,6 @@ interface Transaction {
 export default function TransactionsPage() {
   const [quantity, setQuantity] = useState('');
   const [type, setType] = useState('');
-  const [sku, setSku] = useState('');
   const [category, setCategory] = useState('');
   
   // Mock transactions data
@@ -32,7 +30,6 @@ export default function TransactionsPage() {
       timestamp: '2025-11-09 09:15',
       name: 'Dell XPS 15 Laptop',
       type: 'receiving',
-      sku: 'DELL-XPS15-2025',
       category: 'Electronics',
       quantity: 10
     },
@@ -41,7 +38,6 @@ export default function TransactionsPage() {
       timestamp: '2025-11-09 10:30',
       name: 'Wireless Mouse',
       type: 'shipping',
-      sku: 'ACC-MOUSE-001',
       category: 'Electronics',
       quantity: 25
     },
@@ -50,7 +46,6 @@ export default function TransactionsPage() {
       timestamp: '2025-11-09 11:45',
       name: 'USB-C Hub',
       type: 'receiving',
-      sku: 'ACC-HUB-002',
       category: 'Furniture',
       quantity: 50
     },
@@ -59,7 +54,6 @@ export default function TransactionsPage() {
       timestamp: '2025-11-09 13:20',
       name: 'Monitor Stand',
       type: 'adjustment',
-      sku: 'ACC-STAND-003',
       category: 'Office Supplies',
       quantity: -5
     }
@@ -90,7 +84,7 @@ export default function TransactionsPage() {
     e.preventDefault();
     // Demo submission
     alert('Transaction submitted (demo only)');
-    console.log({ quantity, type, sku, category });
+    console.log({ quantity, type, category });
   };
 
   return (
@@ -128,19 +122,6 @@ export default function TransactionsPage() {
                 <option value="shipping">Shipping</option>
                 <option value="adjustment">Stock Adjustment</option>
               </select>
-            </div>
-            <div>
-              <label htmlFor="sku" className="block text-sm font-medium text-gray-700 mb-1">
-                SKU
-              </label>
-              <input
-                type="text"
-                id="sku"
-                value={sku}
-                onChange={(e) => setSku(e.target.value)}
-                className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-                placeholder="Enter SKU..."
-              />
             </div>
             <div>
               <label htmlFor="quantity" className="block text-sm font-medium text-gray-700 mb-1">
@@ -188,7 +169,6 @@ export default function TransactionsPage() {
                 <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Timestamp</th>
                 <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
                 <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
-                <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">SKU</th>
                 <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
                 <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Quantity</th>
               </tr>
@@ -209,9 +189,6 @@ export default function TransactionsPage() {
                         'bg-yellow-100 text-yellow-800'}`}>
                       {transaction.type}
                     </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 font-mono">
-                    {transaction.sku}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 font-mono">
                     {transaction.category}

@@ -178,7 +178,6 @@ export default function ReportsPage() {
                 <table className="w-full">
                   <thead>
                     <tr className="text-left text-sm font-medium text-gray-900 border-b">
-                      <th className="pb-3">SKU</th>
                       <th className="pb-3">Item Name</th>
                       <th className="pb-3">Net Movement</th>
                       <th className="pb-3">Status</th>
@@ -187,15 +186,12 @@ export default function ReportsPage() {
                   <tbody className="divide-y text-sm text-gray-700">
                     {/** Mock data below; replace with real data when available **/}
                     {[
-                      { sku: 'STAT-4001', name: 'Printer Paper (Ream)', net: 150, status: 'Increased' },
-                      { sku: 'ELEC-1002', name: 'USB-C Cable', net: 150, status: 'Increased' },
-                      { sku: 'ELEC-1001', name: 'Wireless Mouse', net: 105, status: 'Increased' },
-                      { sku: 'OFF-2003', name: 'Stapler', net: -20, status: 'Decreased' }
+                      { name: 'Printer Paper (Ream)', net: 150, status: 'Increased' },
+                      { name: 'USB-C Cable', net: 150, status: 'Increased' },
+                      { name: 'Wireless Mouse', net: 105, status: 'Increased' },
+                      { name: 'Stapler', net: -20, status: 'Decreased' }
                     ].map((row) => (
-                      <tr key={row.sku} className="align-middle">
-                        <td className="py-4">
-                          <span className="inline-block px-3 py-1 text-xs font-medium bg-gray-100 text-gray-800 rounded-full">{row.sku}</span>
-                        </td>
+                      <tr key={row.name} className="align-middle">
                         <td className="py-4">{row.name}</td>
                         <td className={`py-4 font-semibold ${row.net >= 0 ? 'text-green-600' : 'text-red-600'}`}>
                           {row.net >= 0 ? `+${row.net}` : row.net}
