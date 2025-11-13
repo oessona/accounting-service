@@ -1,9 +1,13 @@
+"use client";
+
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { User, Settings, LogOut, HelpCircle, Sun } from "lucide-react";
+
 
 export default function AccountMenu() {
   const [open, setOpen] = useState(false);
-
+  const router = useRouter();
   const user = {
     name: "Name",
     role: "Admin"
@@ -27,7 +31,13 @@ export default function AccountMenu() {
 
           <ul className="space-y-1">
             <li>
-              <button className="flex items-center gap-2 w-full text-left px-3 py-2 rounded-lg hover:bg-gray-100 text-gray-800">
+              <button
+                onClick={() => {
+                  setOpen(false);
+                  router.push('/userpage');
+                }}
+                className="flex items-center gap-2 w-full text-left px-3 py-2 rounded-lg hover:bg-gray-100 text-gray-800"
+              >
                 <Settings className="w-4 h-4 text-gray-500" />
                 Settings
               </button>
