@@ -1,12 +1,22 @@
-import { User, Mail, Settings, Clock, Shield } from "lucide-react";
+'use client';
+
+import { useState } from "react";
+import { User, Mail, Settings, Clock, Shield, Users, Trash2, Edit } from "lucide-react";
 
 export default function UserPage() {
-  const user = {
+  const [user] = useState({
     name: "Full Name",
     email: "email@example.com",
     role: "Admin",
     lastLogin: "Nov 10, 2025, 14:32",
-  };
+  });
+
+  // Mock data for managed users (only shown for admins)
+  const [managedUsers] = useState([
+    { id: 1, name: "Inkar Khairatkyzy", email: "ink@example.com", role: "User" },
+    { id: 2, name: "Mafuyu Asahina", email: "yuki@example.com", role: "User" },
+    { id: 3, name: "Snezhana Khitun", email: "snezha@example.com", role: "User" },
+  ]);
 
   return (
     <div className="p-8 bg-gray-50 min-h-screen">
@@ -55,6 +65,51 @@ export default function UserPage() {
             </button>
           </div>
         </div>
+
+        {/* Manage Users section - only for admins */}
+        {user.role === "Admin" && (
+          <div className="border-t border-gray-200 mt-6 pt-6">
+            <h2 className="text-lg font-semibold text-gray-900 mb-3 flex items-center gap-2">
+              <Users className="w-5 h-5 text-gray-500" />
+              Manage Users
+            </h2>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-gray-200">
+                    <th className="text-left py-3 px-4 font-semibold text-gray-700">Name</th>
+                    <th className="text-left py-3 px-4 font-semibold text-gray-700">Email</th>
+                    <th className="text-left py-3 px-4 font-semibold text-gray-700">Role</th>
+                    <th className="text-center py-3 px-4 font-semibold text-gray-700">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {managedUsers.map((usr) => (
+                    <tr key={usr.id} className="border-b border-gray-100 hover:bg-gray-50">
+                      <td className="py-3 px-4 text-gray-800">{usr.name}</td>
+                      <td className="py-3 px-4 text-gray-600">{usr.email}</td>
+                      <td className="py-3 px-4">
+                        <span className={`inline-block px-3 py-1 text-xs font-semibold rounded-full ${usr.role === "Admin" ? "bg-purple-100 text-purple-800" : "bg-blue-100 text-blue-800"}`}>
+                          {usr.role}
+                        </span>
+                      </td>
+                      <td className="py-3 px-4 text-center">
+                        <div className="flex items-center justify-center gap-2">
+                          <button className="p-1 hover:bg-gray-200 rounded text-gray-600">
+                            <Edit className="w-4 h-4" />
+                          </button>
+                          <button className="p-1 hover:bg-red-100 rounded text-red-600">
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
