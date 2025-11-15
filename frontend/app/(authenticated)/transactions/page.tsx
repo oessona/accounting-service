@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { Edit, Trash2 } from 'lucide-react';
 
 interface StockSummary {
   title: string;
@@ -12,14 +13,12 @@ interface StockSummary {
 interface Transaction {
   id: string;
   timestamp: string;
-  name: string;
-  type: 'receiving' | 'shipping' | 'adjustment';
-  category: string;
-  quantity: number;
+  type: 'income' | 'expence';
+  value: number;
 }
 
 export default function TransactionsPage() {
-  const [quantity, setQuantity] = useState('');
+  const [value, setvalue] = useState('');
   const [type, setType] = useState('');
   const [category, setCategory] = useState('');
   
@@ -28,46 +27,38 @@ export default function TransactionsPage() {
     {
       id: '1',
       timestamp: '2025-11-09 09:15',
-      name: 'Dell XPS 15 Laptop',
-      type: 'receiving',
-      category: 'Electronics',
-      quantity: 10
+      type: 'income',
+      value: 10
     },
     {
       id: '2',
       timestamp: '2025-11-09 10:30',
-      name: 'Wireless Mouse',
-      type: 'shipping',
-      category: 'Electronics',
-      quantity: 25
+      type: 'expence',
+      value: 25
     },
     {
       id: '3',
       timestamp: '2025-11-09 11:45',
-      name: 'USB-C Hub',
-      type: 'receiving',
-      category: 'Furniture',
-      quantity: 50
+      type: 'income',
+      value: 50
     },
     {
       id: '4',
       timestamp: '2025-11-09 13:20',
-      name: 'Monitor Stand',
-      type: 'adjustment',
-      category: 'Office Supplies',
-      quantity: -5
+      type: 'income',
+      value: -5
     }
   ];
 
   const summaries: StockSummary[] = [
     {
-      title: 'Total Received Today',
+      title: 'Total income for Today',
       amount: 150,
       percentage: 25,
       description: 'vs yesterday'
     },
     {
-      title: 'Total Shipped Today',
+      title: 'Total expence for Today',
       amount: 120,
       percentage: 15,
       description: 'vs yesterday'
@@ -84,12 +75,24 @@ export default function TransactionsPage() {
     e.preventDefault();
     // Demo submission
     alert('Transaction submitted (demo only)');
-    console.log({ quantity, type, category });
+    console.log({ value, type, category });
+  };
+
+  const handleEdit = (id: string) => {
+    alert(`Edit transaction ${id}`);
+    // Add edit modal or navigation logic here
+  };
+
+  const handleDelete = (id: string) => {
+    if (confirm(`Delete transaction ${id}?`)) {
+      alert(`Transaction ${id} deleted`);
+      // Add deletion logic here
+    }
   };
 
   return (
-    <div className="p-6 flex-1 bg-gray-50 text-black p-16">
-      <h1 className="text-2xl font-semibold mb-6">Stock Transactions</h1>
+    <div className="p-6 flex-1 bg-gray-50 text-black p-10">
+      <h1 className="text-2xl font-semibold mb-6">Transactions</h1>
       
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
         {summaries.map((summary, index) => (
@@ -104,12 +107,12 @@ export default function TransactionsPage() {
       </div>
 
       <div className="bg-white p-6 rounded-lg shadow">
-        <h2 className="text-lg font-semibold mb-4">Record Stock Movement</h2>
+        <h2 className="text-lg font-semibold mb-4">Add new transaction</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label htmlFor="type" className="block text-sm font-medium text-gray-700 mb-1">
-                Movement Type
+                Type
               </label>
               <select
                 id="type"
@@ -118,37 +121,24 @@ export default function TransactionsPage() {
                 className="w-full p-2 border border-gray-300 rounded-md focus:ring-1 focus:border-transparent"
               >
                 <option value="">Select type...</option>
-                <option value="receiving">Receiving</option>
-                <option value="shipping">Shipping</option>
-                <option value="adjustment">Stock Adjustment</option>
+                <option value="income">Income</option>
+                <option value="expence">Expence</option>
               </select>
             </div>
             <div>
-              <label htmlFor="quantity" className="block text-sm font-medium text-gray-700 mb-1">
-                Quantity
+              <label htmlFor="value" className="block text-sm font-medium text-gray-700 mb-1">
+                Value
               </label>
               <input
                 type="number"
-                id="quantity"
-                value={quantity}
-                onChange={(e) => setQuantity(e.target.value)}
+                id="value"
+                value={value}
+                onChange={(e) => setvalue(e.target.value)}
                 className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:border-transparent"
                 placeholder="0"
               />
             </div>
-            <div>
-              <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-1">
-                Category
-              </label>
-              <input
-                type="text"
-                id="category"
-                value={category}
-                onChange={(e) => setCategory(e.target.value)}
-                className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-                placeholder="Add category..."
-              />
-            </div>
+            
           </div>
           <button
             type="submit"
@@ -167,10 +157,11 @@ export default function TransactionsPage() {
             <thead>
               <tr className="bg-gray-50 text-left">
                 <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Timestamp</th>
-                <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
                 <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
-                <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
-                <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Quantity</th>
+                <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">value</th>
+                <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Edit</th>
+                <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Delete</th>
+
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
@@ -179,24 +170,34 @@ export default function TransactionsPage() {
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     {transaction.timestamp}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                    {transaction.name}
-                  </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm">
                     <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize
-                      ${transaction.type === 'receiving' ? 'bg-green-100 text-green-800' : 
-                        transaction.type === 'shipping' ? 'bg-blue-100 text-blue-800' : 
+                      ${transaction.type === 'income' ? 'bg-green-100 text-green-800' : 
+                        transaction.type === 'expence' ? 'bg-blue-100 text-blue-800' : 
                         'bg-yellow-100 text-yellow-800'}`}>
                       {transaction.type}
                     </span>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 font-mono">
-                    {transaction.category}
-                  </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    <span className={transaction.quantity >= 0 ? 'text-green-600' : 'text-red-600'}>
-                      {transaction.quantity > 0 ? '+' : ''}{transaction.quantity}
+                    <span className={transaction.value >= 0 ? 'text-green-600' : 'text-red-600'}>
+                      {transaction.value > 0 ? '+' : ''}{transaction.value}
                     </span>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm">
+                    <button
+                      onClick={() => handleEdit(transaction.id)}
+                      className="text-blue-600 hover:text-blue-800 hover:bg-blue-50 p-2 rounded"
+                    >
+                      <Edit className="w-4 h-4" />
+                    </button>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm">
+                    <button
+                      onClick={() => handleDelete(transaction.id)}
+                      className="text-red-600 hover:text-red-800 hover:bg-red-50 p-2 rounded"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
                   </td>
                 </tr>
               ))}

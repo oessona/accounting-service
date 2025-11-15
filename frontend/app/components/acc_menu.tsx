@@ -43,18 +43,6 @@ export default function AccountMenu() {
               </button>
             </li>
             <li>
-              <button className="flex items-center gap-2 w-full text-left px-3 py-2 rounded-lg hover:bg-gray-100 text-gray-800">
-                <HelpCircle className="w-4 h-4 text-gray-500" />
-                Help
-              </button>
-            </li>
-            <li>
-              <button className="flex items-center gap-2 w-full text-left px-3 py-2 rounded-lg hover:bg-gray-100 text-gray-800">
-                <Sun className="w-4 h-4 text-gray-500" />
-                Toggle Theme
-              </button>
-            </li>
-            <li>
               <button className="flex items-center gap-2 w-full text-left px-3 py-2 rounded-lg hover:bg-red-50 text-red-600">
                 <LogOut className="w-4 h-4" />
                 Logout

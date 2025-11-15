@@ -11,6 +11,20 @@ export default function UserPage() {
     lastLogin: "Nov 10, 2025, 14:32",
   });
 
+  const [showManageUsers, setShowManageUsers] = useState(false);
+
+    const handleEdit = (name: string) => {
+    alert(`Edit User ${name}`);
+    // Add edit modal or navigation logic here
+  };
+
+  const handleDelete = (name: string) => {
+    if (confirm(`Delete user ${name}?`)) {
+      alert(`User ${name} deleted`);
+      // Add deletion logic here
+    }
+  };
+
   // Mock data for managed users (only shown for admins)
   const [managedUsers] = useState([
     { id: 1, name: "Inkar Khairatkyzy", email: "ink@example.com", role: "User" },
@@ -60,14 +74,17 @@ export default function UserPage() {
             <button className="w-full text-left px-4 py-2 bg-gray-50 hover:bg-gray-100 rounded-lg border text-gray-800">
               Notification Preferences
             </button>
-            <button className="w-full text-left px-4 py-2 bg-gray-50 hover:bg-gray-100 rounded-lg border text-gray-800">
+            <button
+              onClick={() => setShowManageUsers(!showManageUsers)}
+              className="w-full text-left px-4 py-2 bg-gray-50 hover:bg-gray-100 rounded-lg border text-gray-800"
+            >
               Manage Access
             </button>
           </div>
         </div>
 
-        {/* Manage Users section - only for admins */}
-        {user.role === "Admin" && (
+        {/* Manage Users section - only for admins and when toggled */}
+        {user.role === "Admin" && showManageUsers && (
           <div className="border-t border-gray-200 mt-6 pt-6">
             <h2 className="text-lg font-semibold text-gray-900 mb-3 flex items-center gap-2">
               <Users className="w-5 h-5 text-gray-500" />
@@ -95,10 +112,19 @@ export default function UserPage() {
                       </td>
                       <td className="py-3 px-4 text-center">
                         <div className="flex items-center justify-center gap-2">
-                          <button className="p-1 hover:bg-gray-200 rounded text-gray-600">
+                          {/* Edit Button */}
+                          <button
+                            onClick={() => handleEdit(useState.name)} // pass user id
+                            className="text-gray-600 hover:text-gray-800 hover:bg-gray-100 p-2 rounded"
+                          >
                             <Edit className="w-4 h-4" />
                           </button>
-                          <button className="p-1 hover:bg-red-100 rounded text-red-600">
+
+                          {/* Delete Button */}
+                          <button
+                            onClick={() => handleDelete(useState.name)} // pass user id
+                            className="text-red-600 hover:text-red-800 hover:bg-red-50 p-2 rounded"
+                          >
                             <Trash2 className="w-4 h-4" />
                           </button>
                         </div>
