@@ -9,7 +9,6 @@ import {
   Tooltip,
   CartesianGrid,
   Cell,
-  Legend,
   BarChart,
   Bar
 } from 'recharts';
@@ -22,8 +21,8 @@ interface CategoryData {
 }
 
 interface MonthlyData {
-  receiving: number[];
-  shipping: number[];
+  income: number[];
+  expence: number[];
   months: string[];
 }
 
@@ -31,7 +30,8 @@ interface DashboardData {
   userName: string;
   totalItems: number;
   inventoryValue: number;
-  lowStockAlerts: number;
+  IncomeValue: number;
+  ExpenceValue: number;
   todaysActivity: number;
   inventoryGrowth: string;
   monthlyData: MonthlyData;
@@ -45,12 +45,13 @@ export default function DashboardPage() {
     userName: '',
     totalItems: 0,
     inventoryValue: 0,
-    lowStockAlerts: 0,
+    IncomeValue: 0,
+    ExpenceValue: 0,
     todaysActivity: 0,
     inventoryGrowth: '',
     monthlyData: {
-      receiving: [],
-      shipping: [],
+      income: [],
+      expence: [],
       months: []
     },
     categoryData: []
@@ -67,19 +68,17 @@ export default function DashboardPage() {
           userName: "Admin",
           totalItems: 888,
           inventoryValue: 27751.12,
-          lowStockAlerts: 2,
+          IncomeValue: 83253.36,
+          ExpenceValue: 55502.24,
           todaysActivity: 0,
           inventoryGrowth: "+12%",
           monthlyData: {
-            receiving: [450, 510, 460, 590, 620, 680],
-            shipping: [380, 420, 450, 510, 580, 620],
-            months: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun']
+            income: [4500, 5100, 4600, 5900],
+            expence: [3800, 4200, 4500, 5100],
+            months: ['Sep', 'Oct', 'Nov', 'Dec']
           },
           categoryData: [
-            { name: 'Electronics', items: 478, value: 9295.22 },
-            { name: 'Tools', items: 92, value: 3109.08 },
-            { name: 'Furniture', items: 43, value: 12349.57 },
-            { name: 'Stationery', items: 275, value: 2997.25 }
+            { name: 'Test', items: 478, value: 9295.22 },
           ]
         };
         
@@ -126,7 +125,7 @@ export default function DashboardPage() {
           {/* Inventory Value */}
           <div className="bg-white rounded-lg shadow-sm p-6">
             <div className="flex flex-col">
-              <p className="text-sm text-gray-600 mb-1">Total Inventory Value</p>
+              <p className="text-sm text-gray-600 mb-1">Total Value</p>
               <div>
                 <h2 className="text-3xl font-semibold text-gray-900">
                   {formatCurrency(dashboardData.inventoryValue)}
@@ -136,11 +135,29 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          {/* Low Stock */}
+          {/* Income Value */}
           <div className="bg-white rounded-lg shadow-sm p-6">
             <div className="flex flex-col">
-              <p className="text-sm text-gray-600 mb-1">Items need reordering</p>
-              <h2 className="text-3xl font-semibold text-gray-900">{dashboardData.lowStockAlerts}</h2>
+              <p className="text-sm text-gray-600 mb-1">Income</p>
+              <div>
+                <h2 className="text-3xl font-semibold text-gray-900">
+                  {formatCurrency(dashboardData.IncomeValue)}
+                </h2>
+                <p className="text-sm text-green-600 mt-1">+6% from last month</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Expence Value */}
+          <div className="bg-white rounded-lg shadow-sm p-6">
+            <div className="flex flex-col">
+              <p className="text-sm text-gray-600 mb-1">Expence</p>
+              <div>
+                <h2 className="text-3xl font-semibold text-gray-900">
+                  {formatCurrency(dashboardData.ExpenceValue)}
+                </h2>
+                <p className="text-sm text-red-600 mt-1">-12% from last month</p>
+              </div>
             </div>
           </div>
 
@@ -148,36 +165,34 @@ export default function DashboardPage() {
           <div className="bg-white rounded-lg shadow-sm p-6">
             <div className="flex flex-col">
               <p className="text-sm text-gray-800 mb-1">Transactions processed</p>
-              <h2 className="text-3xl font-semibold text-gray-600">{0}</h2>
+              <h2 className="text-3xl font-semibold text-gray-600">{4}</h2>
             </div>
           </div>
         </div>
 
         {/* Charts Section */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1">
           {/* Monthly Activity Chart */}
-          <div className="bg-white rounded-lg shadow-sm p-6">
+          <div className="bg-white rounded-lg shadow-sm p-6 w-full">
             <h3 className="text-lg font-semibold text-gray-900 mb-2">Monthly Activity</h3>
-            <p className="text-sm text-gray-600 mb-4">Receiving vs Shipping trends</p>
+            <p className="text-sm text-gray-600 mb-4">Income vs Expence trends</p>
             <div className="h-[400px] w-full">
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart
                   data={[
-                    { month: 'Jan', receiving: 450, shipping: 380 },
-                    { month: 'Feb', receiving: 510, shipping: 420 },
-                    { month: 'Mar', receiving: 460, shipping: 450 },
-                    { month: 'Apr', receiving: 590, shipping: 510 },
-                    { month: 'May', receiving: 620, shipping: 580 },
-                    { month: 'Jun', receiving: 680, shipping: 620 }
+                    { month: 'Sep', income: 450, expence: 380 },
+                    { month: 'Oct', income: 510, expence: 420 },
+                    { month: 'Nov', income: 460, expence: 450 },
+                    { month: 'Dec', income: 590, expence: 510 }
                   ]}
                   margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
                 >
                   <defs>
-                    <linearGradient id="colorReceiving" x1="0" y1="0" x2="0" y2="1">
+                    <linearGradient id="colorIncome" x1="0" y1="0" x2="0" y2="1">
                       <stop offset="5%" stopColor="#4F46E5" stopOpacity={0.1}/>
                       <stop offset="95%" stopColor="#4F46E5" stopOpacity={0}/>
                     </linearGradient>
-                    <linearGradient id="colorShipping" x1="0" y1="0" x2="0" y2="1">
+                    <linearGradient id="colorExpence" x1="0" y1="0" x2="0" y2="1">
                       <stop offset="5%" stopColor="#10B981" stopOpacity={0.1}/>
                       <stop offset="95%" stopColor="#10B981" stopOpacity={0}/>
                     </linearGradient>
@@ -197,89 +212,60 @@ export default function DashboardPage() {
                   <Tooltip labelStyle={{ color: '#8B5CF6', fontWeight: 700 }} />
                   <Area
                     type="monotone"
-                    dataKey="receiving"
+                    dataKey="income"
                     stroke="#4F46E5"
                     strokeWidth={2}
-                    fill="url(#colorReceiving)"
+                    fill="url(#colorIncome)"
                     dot={{ stroke: '#4F46E5', strokeWidth: 2, fill: '#fff', r: 4 }}
-                    name="Receiving"
+                    name="Income"
                   />
                   <Area
                     type="monotone"
-                    dataKey="shipping"
+                    dataKey="expence"
                     stroke="#10B981"
                     strokeWidth={2}
-                    fill="url(#colorShipping)"
+                    fill="url(#colorExpence)"
                     dot={{ stroke: '#10B981', strokeWidth: 2, fill: '#fff', r: 4 }}
-                    name="Shipping"
+                    name="Expence"
                   />
                 </AreaChart>
               </ResponsiveContainer>
             </div>
           </div>
+        </div>
 
-          {/* Category Distribution Chart */}
-          <div className="bg-white rounded-lg shadow-sm p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">Inventory by Category</h3>
-            <p className="text-sm text-gray-600 mb-4">Stock distribution across categories</p>
-            <div className="h-[400px]">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart
-                  data={[
-                    { category: 'Electronics', value: 478 },
-                    { category: 'Tools', value: 92 },
-                    { category: 'Furniture', value: 43 },
-                    { category: 'Stationery', value: 275 }
-                  ]}
-                  margin={{ top: 20, right: 30, left: 20, bottom: 40 }}
-                >
-                  <CartesianGrid 
-                    strokeDasharray="3 3" 
-                    stroke="#E5E7EB" 
-                    vertical={true}
-                  />
-                  <XAxis 
-                    dataKey="category"
-                    stroke="#365e52ff"
-                    tick={{ fill: '#365e52ff', fontSize: 12 }}
-                  />
-                  <YAxis 
-                    stroke="#6B7280"
-                    tick={{ fill: '#6B7280', fontSize: 12 }}
-                    domain={[0, 600]}
-                    ticks={[0, 150, 300, 450, 600]}
-                  />
-                  <Bar
-                    dataKey="value"
-                    barSize={40}
-                    fill="#8B5CF6"
-                    radius={[4, 4, 0, 0]}
-                  >
-                    {/* Add gradient fill for bars */}
-                    <defs>
-                      <linearGradient id="barGradient" x1="0" y1="0" x2="1" y2="0">
-                        <stop offset="0%" stopColor="#8B5CF6" stopOpacity={1} />
-                        <stop offset="100%" stopColor="#8B5CF6" stopOpacity={0.6} />
-                      </linearGradient>
-                    </defs>
-                    {/* Custom bar fill */}
-                    {[0, 1, 2, 3].map((entry) => (
-                      <Cell key={`cell-${entry}`} fill="url(#barGradient)" />
-                    ))}
-                  </Bar>
-                  <Tooltip
-                    cursor={false}
-                    labelStyle={{ color: '#10B981', fontWeight: 700 }} 
-                    contentStyle={{
-                      backgroundColor: '#fff',
-                      border: '1px solid #fff',
-                      borderRadius: '6px',
-                      padding: '8px'
-                    }}
-                  />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
+        {/* Income & Expense Table */}
+        <div className="bg-white rounded-lg shadow-sm p-8 mt-20 w-full">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">Income & Expense Summary</h3>
+          <p className="text-sm text-gray-600 mb-4">Monthly breakdown</p>
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="bg-gray-50 text-left">
+                  <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Month</th>
+                  <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Income</th>
+                  <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Expense</th>
+                  <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Net</th>
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {dashboardData.monthlyData.months.map((month, index) => {
+                  const income = dashboardData.monthlyData.income[index];
+                  const expence = dashboardData.monthlyData.expence[index];
+                  const net = income - expence;
+                  return (
+                    <tr key={month} className="hover:bg-gray-50">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{month}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-green-600 font-medium">{income}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-red-600 font-medium">{expence}</td>
+                      <td className={`px-6 py-4 whitespace-nowrap text-sm font-medium ${net >= 0 ? 'text-blue-600' : 'text-red-600'}`}>
+                        {net >= 0 ? '+' : ''}{net}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
           </div>
         </div>
       </div>

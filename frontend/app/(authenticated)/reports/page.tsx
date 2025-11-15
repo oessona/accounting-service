@@ -14,10 +14,20 @@ export default function ReportsPage() {
   const [selectedReport, setSelectedReport] = useState('inventory');
 
   const categoryData: CategoryData[] = [
-    { name: 'Electronics', items: 478, value: 9295.22 },
-    { name: 'Tools', items: 92, value: 3109.08 },
-    { name: 'Furniture', items: 43, value: 12349.57 },
-    { name: 'Office Supplies', items: 275, value: 2997.25 }
+    { name: 'Expence', items: 478, value: 9295.22 },
+    { name: 'Income', items: 43, value: 12349.57 }
+  ];
+  const incomeData: CategoryData[] = [
+    { name: 'sales', items: 478, value: 9295.22 },
+    { name: 'refunds', items: 43, value: 12349.57 },
+    { name: 'salary received', items: 43, value: 12349.57 }
+  ];
+  const expenceData: CategoryData[] = [
+    { name: 'rent', items: 478, value: 9295.22 },
+    { name: 'utilities', items: 43, value: 12349.57 },
+    { name: 'software', items: 478, value: 9295.22 },
+    { name: 'subscriptions', items: 43, value: 12349.57 },
+    { name: 'transport', items: 478, value: 9295.22 }
   ];
 
   const formatCurrency = (amount: number) => {
@@ -44,7 +54,6 @@ export default function ReportsPage() {
             className="w-full md:w-64 p-2 border border-gray-900 rounded-lg bg-white text-gray-900"
           >
             <option value="inventory">Inventory Valuation</option>
-            <option value="movement">Stock Movement</option>
             <option value="categories">Transaction Summary</option>
           </select>
         </div>
@@ -65,11 +74,11 @@ export default function ReportsPage() {
 
               <div className="bg-white p-6 rounded-lg shadow-sm">
                 <div className="mb-4">
-                  <p className="text-gray-600 text-sm">Total Items</p>
+                  <p className="text-gray-600 text-sm">Total transactions</p>
                   <div className="flex items-baseline">
-                    <span className="text-gray-900 text-2xl font-semibold">888</span>
+                    <span className="text-gray-900 text-2xl font-semibold">84</span>
                   </div>
-                  <p className="text-gray-500 text-xs mt-1">Units in stock</p>
+                  <p className="text-gray-500 text-xs mt-1">Units </p>
                 </div>
               </div>
 
@@ -85,10 +94,10 @@ export default function ReportsPage() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Category Value Chart */}
+              {/* Total Value Chart */}
               <div className="bg-white p-6 rounded-lg shadow-sm">
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">Value by Category</h3>
-                <p className="text-sm text-gray-600 mb-4">Distribution of inventory value</p>
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">Total Value</h3>
+                <p className="text-sm text-gray-600 mb-4">Distribution of total value</p>
                 <div className="h-64">
                   <ResponsiveContainer width="100%" height="100%">
                     <PieChart>
@@ -121,6 +130,79 @@ export default function ReportsPage() {
                 </div>
               </div>
 
+              {/* Category Breakdown Table
+              <div className="bg-white p-6 rounded-lg shadow-sm">
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">Income value</h3>
+                <p className="text-sm text-gray-600 mb-4">Distribution of income value</p>
+                <div className="h-64">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                      <Pie
+                        data={incomeData}
+                        dataKey="value"
+                        nameKey="name"
+                        cx="50%"
+                        cy="50%"
+                        outerRadius={80}
+                        label={(entry: any) => `${entry.name}: ${formatCurrency(entry.value)}`}
+                      >
+                        {categoryData.map((_, index) => (
+                          <Cell 
+                            key={`cell-${index}`} 
+                            fill={[
+                              '#10b981', // teal
+                              '#6366f1', // indigo
+                              '#f59e0b', // amber
+                              '#8b5cf6'  // purple
+                            ][index % 4]} 
+                          />
+                        ))}
+                      </Pie>
+                      <Tooltip 
+                        formatter={(value: number) => formatCurrency(value)} 
+                      />
+                    </PieChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+            </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Category Value Chart */}
+              {/* <div className="bg-white p-6 rounded-lg shadow-sm">
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">Expence Value</h3>
+                <p className="text-sm text-gray-600 mb-4">Distribution of expence value</p>
+                <div className="h-64">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                      <Pie
+                        data={expenceData}
+                        dataKey="value"
+                        nameKey="name"
+                        cx="50%"
+                        cy="50%"
+                        outerRadius={80}
+                        label={(entry: any) => `${entry.name}: ${formatCurrency(entry.value)}`}
+                      >
+                        {categoryData.map((_, index) => (
+                          <Cell 
+                            key={`cell-${index}`} 
+                            fill={[
+                              '#10b981', // teal
+                              '#6366f1', // indigo
+                              '#f59e0b', // amber
+                              '#8b5cf6'  // purple
+                            ][index % 4]} 
+                          />
+                        ))}
+                      </Pie>
+                      <Tooltip 
+                        formatter={(value: number) => formatCurrency(value)} 
+                      />
+                    </PieChart>
+                  </ResponsiveContainer>
+                </div>
+              </div> */}
+
               {/* Category Breakdown Table */}
               <div className="bg-white p-6 rounded-lg shadow-sm text-gray-600">
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">Category Breakdown</h3>
@@ -130,7 +212,6 @@ export default function ReportsPage() {
                     <thead>
                       <tr className="text-left text-sm font-medium text-gray-900 border-b">
                         <th className="pb-3">Category</th>
-                        <th className="pb-3">Items</th>
                         <th className="pb-3">Value</th>
                       </tr>
                     </thead>
@@ -138,7 +219,6 @@ export default function ReportsPage() {
                       {categoryData.map((category) => (
                         <tr key={category.name} className="text-sm">
                           <td className="py-3">{category.name}</td>
-                          <td className="py-3">{category.items}</td>
                           <td className="py-3">{formatCurrency(category.value)}</td>
                         </tr>
                       ))}
@@ -146,69 +226,10 @@ export default function ReportsPage() {
                   </table>
                 </div>
               </div>
-            </div>
-          </>
-        )}
+            </div> 
+            </>
+            )}
 
-        {/* Stock Movement view */}
-        {selectedReport === 'movement' && (
-          <>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-              <div className="bg-white p-6 rounded-lg shadow-sm">
-                <p className="text-gray-600 text-sm">Received (30 days)</p>
-                <div className="mt-4">
-                  <div className="text-2xl font-semibold text-gray-900">490 units</div>
-                  <p className="text-gray-500 text-xs mt-1">Inbound inventory</p>
-                </div>
-              </div>
-
-              <div className="bg-white p-6 rounded-lg shadow-sm">
-                <p className="text-gray-600 text-sm">Shipped (30 days)</p>
-                <div className="mt-4">
-                  <div className="text-2xl font-semibold text-gray-900">102 units</div>
-                  <p className="text-gray-500 text-xs mt-1">Outbound inventory</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-white p-6 rounded-lg shadow-sm">
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">Top Stock Movements</h3>
-              <p className="text-sm text-gray-600 mb-4">Items with highest activity</p>
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead>
-                    <tr className="text-left text-sm font-medium text-gray-900 border-b">
-                      <th className="pb-3">Item Name</th>
-                      <th className="pb-3">Net Movement</th>
-                      <th className="pb-3">Status</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y text-sm text-gray-700">
-                    {/** Mock data below; replace with real data when available **/}
-                    {[
-                      { name: 'Printer Paper (Ream)', net: 150, status: 'Increased' },
-                      { name: 'USB-C Cable', net: 150, status: 'Increased' },
-                      { name: 'Wireless Mouse', net: 105, status: 'Increased' },
-                      { name: 'Stapler', net: -20, status: 'Decreased' }
-                    ].map((row) => (
-                      <tr key={row.name} className="align-middle">
-                        <td className="py-4">{row.name}</td>
-                        <td className={`py-4 font-semibold ${row.net >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                          {row.net >= 0 ? `+${row.net}` : row.net}
-                        </td>
-                        <td className="py-4">
-                          <span className={`inline-flex items-center px-3 py-1 text-xs font-medium rounded-full border ${row.net >= 0 ? 'text-green-600 border-green-200 bg-green-50' : 'text-red-600 border-red-200 bg-red-50'}`}>
-                            {row.status}
-                          </span>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </>
-        )}
 
         {/* Category Analysis / Transaction Summary view */}
         {selectedReport === 'categories' && (
@@ -217,24 +238,22 @@ export default function ReportsPage() {
               <div className="bg-white p-6 rounded-lg shadow-sm">
                 <p className="text-gray-600 text-sm">Total Transactions</p>
                 <div className="mt-4">
-                  <div className="text-2xl font-semibold text-gray-900">12</div>
+                  <div className="text-2xl font-semibold text-gray-900">84</div>
                   <p className="text-gray-500 text-xs mt-1">All time</p>
                 </div>
               </div>
 
               <div className="bg-white p-6 rounded-lg shadow-sm">
-                <p className="text-gray-600 text-sm">Receiving Transactions</p>
+                <p className="text-gray-600 text-sm">Income from Transactions</p>
                 <div className="mt-4">
-                  <div className="text-2xl font-semibold text-gray-900">5</div>
-                  <p className="text-gray-500 text-xs mt-1">Inbound operations</p>
+                  <div className="text-2xl font-semibold text-gray-900">52</div>
                 </div>
               </div>
 
               <div className="bg-white p-6 rounded-lg shadow-sm">
-                <p className="text-gray-600 text-sm">Shipping Transactions</p>
+                <p className="text-gray-600 text-sm">Expence from Transactions</p>
                 <div className="mt-4">
-                  <div className="text-2xl font-semibold text-gray-900">5</div>
-                  <p className="text-gray-500 text-xs mt-1">Outbound operations</p>
+                  <div className="text-2xl font-semibold text-gray-900">32</div>
                 </div>
               </div>
             </div>
@@ -244,7 +263,7 @@ export default function ReportsPage() {
               <p className="text-sm text-gray-600 mb-4">Breakdown of transaction types</p>
               <div className="h-72">
                 <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={[{ type: 'Received', count: 5 }, { type: 'Shipped', count: 5 }, { type: 'Adjusted', count: 2 }]} margin={{ left: 0, right: 0, top: 10, bottom: 0 }}>
+                  <BarChart data={[{ type: 'Income', count: 52 }, { type: 'Expence', count: 32 }, ]} margin={{ left: 0, right: 0, top: 62, bottom: 0 }}>
                     <CartesianGrid strokeDasharray="3 3" vertical={false} />
                     <XAxis dataKey="type" tick={{ fill: '#6b7280' }} />
                     <YAxis tick={{ fill: '#6b7280' }} />
