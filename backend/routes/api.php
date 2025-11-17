@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\AccountController;
+use App\Http\Controllers\ReportController;
+use App\Http\Controllers\TransactionController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 
@@ -13,10 +15,16 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
 
 Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/accounts', [AccountController::class, 'index']);
-    Route::post('/accounts', [AccountController::class, 'store']);
-    Route::get('/accounts/{id}', [AccountController::class, 'show']);
-    Route::patch('/accounts/{id}', [AccountController::class, 'update']);
-    Route::delete('/accounts/{id}', [AccountController::class, 'destroy']);
+
+    Route::get('/transactions', [TransactionController::class, 'index']);
+    Route::get('/transactions/stats/today', [TransactionController::class, 'dailyStats']);
+    Route::post('/transactions', [TransactionController::class, 'store']);
+    Route::put('/transactions/{id}', [TransactionController::class, 'update']);
+    Route::delete('/transactions/{id}', [TransactionController::class, 'destroy']);
+
+    // Reports
+    Route::get('/reports/summary', [ReportController::class, 'summary']);
+    Route::get('/reports/transactions', [ReportController::class, 'allTransactions']);
 });
+
 
