@@ -10,7 +10,7 @@ export default function AccountMenu() {
   const router = useRouter();
   const user = {
     name: "Name",
-    role: "Admin"
+    role: "User"
   };
 
   return (
