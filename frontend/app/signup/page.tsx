@@ -1,19 +1,24 @@
 "use client";
 
-import React, { JSX, useState } from "react";
+import React, { JSX, useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import apiFetch from '../../utils/api';
 
 type FormState = {
+  name: string;
   email: string;
   password: string;
-  confirm: string;
+  password_confirmation: string;
 };
 
 export default function SignUpPage(): JSX.Element {
+  const router = useRouter();
   const [form, setForm] = useState<FormState>({
+    name: "",
     email: "",
     password: "",
-    confirm: "",
+    password_confirmation: "",
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -21,13 +26,21 @@ export default function SignUpPage(): JSX.Element {
 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-  const onChange = (e: React.ChangeEvent<HTMLInputElement>) =>
+  useEffect(() => {
+    // If already logged in, redirect to dashboard
+    const token = typeof window !== 'undefined' ? localStorage.getItem('auth_token') : null;
+    if (token) {
+      router.push('/dashboard');
+    }
+  }, [router]);
+
+  const onChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) =>
     setForm({ ...form, [e.target.name]: e.target.value });
 
   const validate = (): string | null => {
     if (!emailRegex.test(form.email)) return "Invalid email format";
     if (form.password.length < 6) return "Password must be at least 6 characters";
-    if (form.password !== form.confirm) return "Passwords do not match";
+    if (form.password !== form.password_confirmation) return "Passwords do not match";
     return null;
   };
 
@@ -43,20 +56,27 @@ export default function SignUpPage(): JSX.Element {
 
     setLoading(true);
     try {
-      const res = await fetch("/api/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: form.email, password: form.password }),
+      const result = await apiFetch('/api/register', {
+        method: 'POST',
+        body: JSON.stringify({ 
+          name: form.name, 
+          email: form.email, 
+          password: form.password, 
+          password_confirmation: form.password_confirmation
+        }),
       });
 
-      if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
-        throw new Error(data?.message || "Failed to register");
+      // Store token and redirect to dashboard
+      if (result?.token) {
+        localStorage.setItem('auth_token', result.token);
+        document.cookie = `auth_token=${result.token}; path=/; max-age=604800; SameSite=Lax`;
+        window.location.href = '/dashboard';
+      } else {
+        setSuccess("Account created successfully.");
+        setForm({ name: "", email: "", password: "", password_confirmation: "" });
       }
-
-      setSuccess("Account created. Check your email to verify (if applicable).");
-      setForm({ email: "", password: "", confirm: "" });
     } catch (err: any) {
+      console.error('Registration error:', err);
       setError(err?.message || "Registration failed");
     } finally {
       setLoading(false);
@@ -69,6 +89,21 @@ export default function SignUpPage(): JSX.Element {
           <h1 className="text-center text-2xl sm:text-3xl font-semibold mb-6 text-gray-900">Sign Up</h1>
 
           <form onSubmit={onSubmit} className="space-y-4 text-gray-600">
+            <div>
+              <label htmlFor="name" className="sr-only">
+                Name
+              </label>
+              <input
+                id="name"
+                name="name"
+                autoComplete="name"
+                value={form.name}
+                onChange={onChange}
+                placeholder="Enter your name..."
+                className={`w-full border ${error && form.name.length < 3 ? 'border-red-600' : 'border-gray-300'} rounded-md px-3 py-2 text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500`}
+                required
+              />
+            </div>
             <div>
               <label htmlFor="email" className="sr-only">
                 Email
@@ -103,18 +138,18 @@ export default function SignUpPage(): JSX.Element {
             </div>
 
             <div>
-              <label htmlFor="confirm" className="sr-only">
-                Confirm Password
+              <label htmlFor="password_confirmation" className="sr-only">
+                password_confirmation Password
               </label>
               <input
-                id="confirm"
-                name="confirm"
+                id="password_confirmation"
+                name="password_confirmation"
                 type="password"
                 autoComplete="new-password"
-                value={form.confirm}
+                value={form.password_confirmation}
                 onChange={onChange}
-                placeholder="Confirm your password"
-                className={`w-full border ${error && form.password !== form.confirm ? 'border-red-600' : 'border-gray-300'} rounded-md px-3 py-2 text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500`}
+                placeholder="password_confirmation your password"
+                className={`w-full border ${error && form.password !== form.password_confirmation ? 'border-red-600' : 'border-gray-300'} rounded-md px-3 py-2 text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500`}
                 required
               />
             </div>

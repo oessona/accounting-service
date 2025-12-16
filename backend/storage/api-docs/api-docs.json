@@ -1,0 +1,230 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Accounting Service API",
+        "description": "API documentation for the Accounting Service",
+        "contact": {
+            "email": "support@example.com"
+        },
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/api/accounts": {
+            "get": {
+                "tags": [
+                    "Accounts"
+                ],
+                "summary": "Get list of accounts",
+                "description": "Returns list of accounts",
+                "operationId": "getAccountsList",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/admin/users": {
+            "get": {
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Get list of all users",
+                "description": "Returns list of users (Admin only)",
+                "operationId": "getUsersList",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/admin/users/{id}": {
+            "delete": {
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Delete a user",
+                "description": "Delete a user by ID (Admin only)",
+                "operationId": "deleteUser",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User deleted"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "User not found"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/admin/activity": {
+            "get": {
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Get system activity",
+                "description": "Returns recent transactions for audit log (Admin only)",
+                "operationId": "getAdminActivity",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/transactions": {
+            "get": {
+                "tags": [
+                    "Transactions"
+                ],
+                "summary": "Get list of transactions",
+                "description": "Returns list of transactions",
+                "operationId": "getTransactionsList",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Transactions"
+                ],
+                "summary": "Store new transaction",
+                "description": "Returns transaction data",
+                "operationId": "storeTransaction",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "account_id",
+                                    "type",
+                                    "category",
+                                    "amount",
+                                    "transaction_date"
+                                ],
+                                "properties": {
+                                    "account_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "type": {
+                                        "type": "string",
+                                        "example": "expense"
+                                    },
+                                    "category": {
+                                        "type": "string",
+                                        "example": "Groceries"
+                                    },
+                                    "amount": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 50.25
+                                    },
+                                    "transaction_date": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2023-10-25"
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "example": "Weekly grocery shopping"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Successful operation"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Accounts",
+            "description": "API Endpoints of Accounts"
+        },
+        {
+            "name": "Admin",
+            "description": "Admin management endpoints"
+        },
+        {
+            "name": "Transactions",
+            "description": "API Endpoints of Transactions"
+        }
+    ]
+}

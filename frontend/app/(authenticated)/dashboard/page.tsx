@@ -1,88 +1,73 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 import {
   AreaChart, Area,
   ResponsiveContainer,
   XAxis, YAxis,
   Tooltip,
   CartesianGrid,
-  Cell,
-  BarChart,
-  Bar
 } from 'recharts';
-
-interface CategoryData {
-  name: string;
-  items: number;
-  value: number;
-  [key: string]: string | number; // Index signature for recharts
-}
 
 interface MonthlyData {
   income: number[];
-  expence: number[];
+  expense: number[];
   months: string[];
 }
 
 interface DashboardData {
   userName: string;
-  totalItems: number;
-  inventoryValue: number;
+  TotalValue: number;
   IncomeValue: number;
-  ExpenceValue: number;
+  ExpenseValue: number;
   todaysActivity: number;
-  inventoryGrowth: string;
+  growthInPercen: string;
   monthlyData: MonthlyData;
-  categoryData: CategoryData[];
 }
 
 export default function DashboardPage() {
-  const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
   const [dashboardData, setDashboardData] = useState<DashboardData>({
     userName: '',
-    totalItems: 0,
-    inventoryValue: 0,
+    TotalValue: 0,
     IncomeValue: 0,
-    ExpenceValue: 0,
+    ExpenseValue: 0,
     todaysActivity: 0,
-    inventoryGrowth: '',
+    growthInPercen: '',
     monthlyData: {
       income: [],
-      expence: [],
+      expense: [],
       months: []
-    },
-    categoryData: []
+    }
   });
 
   useEffect(() => {
     async function fetchDashboardData() {
       setIsLoading(true);
       try {
-        // Simulate loading for demo purposes
-        await new Promise(resolve => setTimeout(resolve, 500));
+        const [userRes, summaryRes, todayRes] = await Promise.all([
+          import('../../../utils/api').then(m => m.default('/api/user', { method: 'GET' }).catch(() => ({ name: 'User' }))),
+          import('../../../utils/api').then(m => m.default('/api/reports/summary', { method: 'GET' }).catch(() => ({ total: { income: 0, expense: 0, balance: 0 } }))),
+          import('../../../utils/api').then(m => m.default('/api/transactions/stats/today', { method: 'GET' }).catch(() => ({ income: 0, expense: 0 }))),
+        ]);
+
+        const income = summaryRes?.total?.income || 0;
+        const expense = summaryRes?.total?.expense || 0;
+        const balance = summaryRes?.total?.balance || (income - expense);
         
-        const mockData: DashboardData = {
-          userName: "Admin",
-          totalItems: 888,
-          inventoryValue: 27751.12,
-          IncomeValue: 83253.36,
-          ExpenceValue: 55502.24,
-          todaysActivity: 0,
-          inventoryGrowth: "+12%",
+        setDashboardData({
+          userName: userRes?.name || 'User',
+          TotalValue: balance,
+          IncomeValue: income,
+          ExpenseValue: expense,
+          todaysActivity: (todayRes?.income || 0) + (todayRes?.expense || 0),
+          growthInPercen: "+0%",
           monthlyData: {
-            income: [4500, 5100, 4600, 5900],
-            expence: [3800, 4200, 4500, 5100],
+            income: [income / 4, income / 4, income / 4, income / 4],
+            expense: [expense / 4, expense / 4, expense / 4, expense / 4],
             months: ['Sep', 'Oct', 'Nov', 'Dec']
           },
-          categoryData: [
-            { name: 'Test', items: 478, value: 9295.22 },
-          ]
-        };
-        
-        setDashboardData(mockData);
+        });
       } catch (error) {
         console.error('Failed to fetch dashboard data:', error);
       } finally {
@@ -122,13 +107,13 @@ export default function DashboardPage() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
 
 
-          {/* Inventory Value */}
+          {/* Total Value */}
           <div className="bg-white rounded-lg shadow-sm p-6">
             <div className="flex flex-col">
               <p className="text-sm text-gray-600 mb-1">Total Value</p>
               <div>
                 <h2 className="text-3xl font-semibold text-gray-900">
-                  {formatCurrency(dashboardData.inventoryValue)}
+                  {formatCurrency(dashboardData.TotalValue)}
                 </h2>
                 <p className="text-sm text-green-600 mt-1">+12% from last month</p>
               </div>
@@ -148,13 +133,13 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          {/* Expence Value */}
+          {/* expense Value */}
           <div className="bg-white rounded-lg shadow-sm p-6">
             <div className="flex flex-col">
-              <p className="text-sm text-gray-600 mb-1">Expence</p>
+              <p className="text-sm text-gray-600 mb-1">expense</p>
               <div>
                 <h2 className="text-3xl font-semibold text-gray-900">
-                  {formatCurrency(dashboardData.ExpenceValue)}
+                  {formatCurrency(dashboardData.ExpenseValue)}
                 </h2>
                 <p className="text-sm text-red-600 mt-1">-12% from last month</p>
               </div>
@@ -175,15 +160,15 @@ export default function DashboardPage() {
           {/* Monthly Activity Chart */}
           <div className="bg-white rounded-lg shadow-sm p-6 w-full">
             <h3 className="text-lg font-semibold text-gray-900 mb-2">Monthly Activity</h3>
-            <p className="text-sm text-gray-600 mb-4">Income vs Expence trends</p>
+            <p className="text-sm text-gray-600 mb-4">Income vs expense trends</p>
             <div className="h-[400px] w-full">
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart
                   data={[
-                    { month: 'Sep', income: 450, expence: 380 },
-                    { month: 'Oct', income: 510, expence: 420 },
-                    { month: 'Nov', income: 460, expence: 450 },
-                    { month: 'Dec', income: 590, expence: 510 }
+                    { month: 'Sep', income: 4500, expense: 3800 },
+                    { month: 'Oct', income: 5100, expense: 4200 },
+                    { month: 'Nov', income: 4600, expense: 4500 },
+                    { month: 'Dec', income: 5900, expense: 5100 }
                   ]}
                   margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
                 >
@@ -192,7 +177,7 @@ export default function DashboardPage() {
                       <stop offset="5%" stopColor="#4F46E5" stopOpacity={0.1}/>
                       <stop offset="95%" stopColor="#4F46E5" stopOpacity={0}/>
                     </linearGradient>
-                    <linearGradient id="colorExpence" x1="0" y1="0" x2="0" y2="1">
+                    <linearGradient id="colorexpense" x1="0" y1="0" x2="0" y2="1">
                       <stop offset="5%" stopColor="#10B981" stopOpacity={0.1}/>
                       <stop offset="95%" stopColor="#10B981" stopOpacity={0}/>
                     </linearGradient>
@@ -221,12 +206,12 @@ export default function DashboardPage() {
                   />
                   <Area
                     type="monotone"
-                    dataKey="expence"
+                    dataKey="expense"
                     stroke="#10B981"
                     strokeWidth={2}
-                    fill="url(#colorExpence)"
+                    fill="url(#colorexpense)"
                     dot={{ stroke: '#10B981', strokeWidth: 2, fill: '#fff', r: 4 }}
-                    name="Expence"
+                    name="expense"
                   />
                 </AreaChart>
               </ResponsiveContainer>
@@ -251,13 +236,13 @@ export default function DashboardPage() {
               <tbody className="bg-white divide-y divide-gray-200">
                 {dashboardData.monthlyData.months.map((month, index) => {
                   const income = dashboardData.monthlyData.income[index];
-                  const expence = dashboardData.monthlyData.expence[index];
-                  const net = income - expence;
+                  const expense = dashboardData.monthlyData.expense[index];
+                  const net = income - expense;
                   return (
                     <tr key={month} className="hover:bg-gray-50">
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{month}</td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-green-600 font-medium">{income}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-red-600 font-medium">{expence}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-red-600 font-medium">{expense}</td>
                       <td className={`px-6 py-4 whitespace-nowrap text-sm font-medium ${net >= 0 ? 'text-blue-600' : 'text-red-600'}`}>
                         {net >= 0 ? '+' : ''}{net}
                       </td>

@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Nette\Schema\ValidationException;
+use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
@@ -40,7 +40,14 @@ class AuthController extends Controller
         $user = User::where('email', $validated['email'])->first();
 
         if(!$user || !Hash::check($validated['password'], $user->password)){
-            throw ValidationException::withMessage(['email' => ['Invalid credentials']]);
+            // For API requests, return JSON error directly instead of throwing ValidationException
+            // which might cause redirects
+            return response()->json([
+                'message' => 'The given data was invalid.',
+                'errors' => [
+                    'email' => ['Invalid credentials']
+                ]
+            ], 422);
         }
         $token = $user->createToken('auth_token')->plainTextToken;
 

@@ -1,9 +1,9 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import Navigation from '../components/Navigation';
 import AccountMenu from '../components/acc_menu';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 
 function formatDate(date: Date): string {
   return date.toLocaleDateString('en-US', {
@@ -19,6 +19,16 @@ export default function AuthenticatedLayout({
   children: React.ReactNode;
 }) {
   const router = useRouter();
+  const pathname = usePathname();
+
+  useEffect(() => {
+    // Check authentication on mount and route changes
+    const token = localStorage.getItem('auth_token');
+    if (!token) {
+      router.push('/login?redirect=' + encodeURIComponent(pathname));
+    }
+  }, [router, pathname]);
+
   return (
     <div className="min-h-screen">
       {/* Header */}
