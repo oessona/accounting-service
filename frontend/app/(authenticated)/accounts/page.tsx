@@ -7,7 +7,7 @@ import { Plus, Wallet, TrendingUp, TrendingDown, PiggyBank } from 'lucide-react'
 interface Account {
     id: number;
     name: string;
-    type: 'income' | 'expense' | 'savings';
+    type: 'checking' | 'savings' | 'credit_card' | 'cash' | 'investment';
     balance: number;
 }
 
@@ -18,7 +18,7 @@ export default function AccountsPage() {
 
     // Form state
     const [name, setName] = useState('');
-    const [type, setType] = useState('expense');
+    const [type, setType] = useState('checking');
     const [balance, setBalance] = useState('');
 
     const fetchAccounts = () => {
@@ -61,9 +61,11 @@ export default function AccountsPage() {
 
     const getIcon = (type: string) => {
         switch (type) {
-            case 'income': return <TrendingUp className="text-green-600" />;
-            case 'expense': return <TrendingDown className="text-red-600" />;
-            case 'savings': return <PiggyBank className="text-blue-600" />;
+            case 'checking': return <Wallet className="text-blue-600" />;
+            case 'savings': return <PiggyBank className="text-green-600" />;
+            case 'credit_card': return <TrendingDown className="text-red-600" />;
+            case 'cash': return <TrendingUp className="text-teal-600" />;
+            case 'investment': return <TrendingUp className="text-purple-600" />;
             default: return <Wallet className="text-gray-600" />;
         }
     };
@@ -106,9 +108,11 @@ export default function AccountsPage() {
                                 onChange={(e) => setType(e.target.value)}
                                 className="w-full rounded-lg border-gray-300 border p-2 focus:ring-teal-500 focus:border-teal-500 text-black"
                             >
-                                <option value="income">Income Source</option>
-                                <option value="expense">Expense Source</option>
-                                <option value="savings">Savings</option>
+                                <option value="checking">Checking Account</option>
+                                <option value="savings">Savings Account</option>
+                                <option value="credit_card">Credit Card</option>
+                                <option value="cash">Cash/Wallet</option>
+                                <option value="investment">Investment Account</option>
                             </select>
                         </div>
                         <div>
@@ -153,10 +157,12 @@ export default function AccountsPage() {
                                     {getIcon(account.type)}
                                 </div>
                                 <span className={`px-2 py-1 text-xs font-medium rounded-full capitalize
-                  ${account.type === 'income' ? 'bg-green-100 text-green-800' :
-                                        account.type === 'expense' ? 'bg-red-100 text-red-800' :
-                                            'bg-blue-100 text-blue-800'}`}>
-                                    {account.type}
+                  ${account.type === 'checking' ? 'bg-blue-100 text-blue-800' :
+                                        account.type === 'savings' ? 'bg-green-100 text-green-800' :
+                                        account.type === 'credit_card' ? 'bg-red-100 text-red-800' :
+                                        account.type === 'cash' ? 'bg-teal-100 text-teal-800' :
+                                            'bg-purple-100 text-purple-800'}`}>
+                                    {account.type.replace('_', ' ')}
                                 </span>
                             </div>
                             <h3 className="text-lg font-semibold text-gray-900 mb-1">{account.name}</h3>

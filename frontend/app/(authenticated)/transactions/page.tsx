@@ -354,7 +354,7 @@ export default function TransactionsPage() {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                     <span className={transaction.type === 'income' ? 'text-green-600' : 'text-red-600'}>
-                      {transaction.type === 'income' ? '+' : '-'}{transaction.amount.toFixed(2)}
+                      {transaction.type === 'income' ? '+' : '-'}{Number(transaction.amount).toFixed(2)}
                     </span>
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-500">

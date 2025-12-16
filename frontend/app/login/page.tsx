@@ -2,9 +2,10 @@
 
 import React, { useState, FormEvent, JSX, useEffect } from "react";
 import Link from "next/link";
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 export default function LoginPage(): JSX.Element {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
@@ -12,6 +13,14 @@ export default function LoginPage(): JSX.Element {
   const [error, setError] = useState<string | null>(null);
 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  useEffect(() => {
+    // If already logged in, redirect to dashboard
+    const token = typeof window !== 'undefined' ? localStorage.getItem('auth_token') : null;
+    if (token) {
+      router.push('/dashboard');
+    }
+  }, [router]);
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -60,8 +69,9 @@ export default function LoginPage(): JSX.Element {
         return;
       }
       
-      // Store token in localStorage
+      // Store token in localStorage and cookie
       localStorage.setItem('auth_token', token);
+      document.cookie = `auth_token=${token}; path=/; max-age=604800; SameSite=Lax`;
       
       // Get the redirect URL from the search params or default to dashboard
       const redirectTo = searchParams.get('redirect') || '/dashboard';

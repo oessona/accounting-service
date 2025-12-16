@@ -112,12 +112,15 @@ class AdminController extends Controller
             ->limit(50)
             ->get()
             ->map(function ($t) {
+                $typeLabel = ucfirst($t->type);
+                $amount = number_format($t->amount, 2);
+                
                 return [
                     'id' => $t->id,
                     'user' => $t->user->name ?? 'Unknown',
-                    'action' => 'create_transaction', // simplified for now
-                    'target' => 'TX-' . $t->id,
-                    'details' => "{$t->type}: {$t->amount} ({$t->category})",
+                    'action' => 'Transaction Created',
+                    'target' => 'Transaction #' . $t->id,
+                    'details' => "{$typeLabel}: \${$amount} - {$t->category}",
                     'at' => $t->created_at
                 ];
             });

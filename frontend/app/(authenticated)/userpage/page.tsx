@@ -8,8 +8,8 @@ export default function UserPage() {
   const [user, setUser] = useState({
     name: "Full Name",
     email: "email@example.com",
-    role: "Admin",
-    lastLogin: "Nov 10, 2025, 14:32",
+    role: "user",
+    created_at: null as string | null,
   });
 
   const [loading, setLoading] = useState(false);
@@ -49,12 +49,12 @@ export default function UserPage() {
 
           <div className="flex items-center gap-3">
             <Clock className="w-5 h-5 text-gray-500" />
-            <p>Last login: {user.lastLogin}</p>
+            <p>Member since: {user.created_at ? new Date(user.created_at).toLocaleDateString() : 'N/A'}</p>
           </div>
 
           <div className="flex items-center gap-3">
             <Shield className="w-5 h-5 text-gray-500" />
-            <p>Account Type: {user.role === "Admin" ? "Full Access" : "Limited Access"}</p>
+            <p>Account Type: {user.role === "admin" ? "Administrator" : "Standard User"}</p>
           </div>
         </div>
 

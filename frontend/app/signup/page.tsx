@@ -1,7 +1,8 @@
 "use client";
 
-import React, { JSX, useState } from "react";
+import React, { JSX, useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import apiFetch from '../../utils/api';
 
 type FormState = {
@@ -9,22 +10,29 @@ type FormState = {
   email: string;
   password: string;
   password_confirmation: string;
-  role?: string;
 };
 
 export default function SignUpPage(): JSX.Element {
+  const router = useRouter();
   const [form, setForm] = useState<FormState>({
     name: "",
     email: "",
     password: "",
     password_confirmation: "",
-    role: "User",
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  useEffect(() => {
+    // If already logged in, redirect to dashboard
+    const token = typeof window !== 'undefined' ? localStorage.getItem('auth_token') : null;
+    if (token) {
+      router.push('/dashboard');
+    }
+  }, [router]);
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) =>
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -48,14 +56,27 @@ export default function SignUpPage(): JSX.Element {
 
     setLoading(true);
     try {
-      await apiFetch('/api/register', {
+      const result = await apiFetch('/api/register', {
         method: 'POST',
-        body: JSON.stringify({ name: form.name, email: form.email, password: form.password, password_confirmation: form.password_confirmation, role: form.role || 'User' }),
+        body: JSON.stringify({ 
+          name: form.name, 
+          email: form.email, 
+          password: form.password, 
+          password_confirmation: form.password_confirmation
+        }),
       });
 
-      setSuccess("Account created. Check your email to verify (if applicable).");
-      setForm({ name: "", email: "", password: "", password_confirmation: "", role: "User" });
+      // Store token and redirect to dashboard
+      if (result?.token) {
+        localStorage.setItem('auth_token', result.token);
+        document.cookie = `auth_token=${result.token}; path=/; max-age=604800; SameSite=Lax`;
+        window.location.href = '/dashboard';
+      } else {
+        setSuccess("Account created successfully.");
+        setForm({ name: "", email: "", password: "", password_confirmation: "" });
+      }
     } catch (err: any) {
+      console.error('Registration error:', err);
       setError(err?.message || "Registration failed");
     } finally {
       setLoading(false);

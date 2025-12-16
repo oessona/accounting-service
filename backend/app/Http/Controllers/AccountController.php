@@ -52,7 +52,7 @@ class AccountController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'type' => 'required|in:income,expense,savings',
+            'type' => 'required|in:checking,savings,credit_card,cash,investment',
             'balance' => 'required|numeric|min:0'
         ]);
 

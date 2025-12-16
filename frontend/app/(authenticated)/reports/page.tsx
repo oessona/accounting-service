@@ -11,23 +11,47 @@ interface CategoryData {
 
 export default function ReportsPage() {
   const [selectedReport, setSelectedReport] = useState('profitLoss');
+  const [loading, setLoading] = useState(false);
+  const [categoryData, setCategoryData] = useState<CategoryData[]>([]);
+  const [incomeData, setIncomeData] = useState<CategoryData[]>([]);
+  const [expenceData, setExpenceData] = useState<CategoryData[]>([]);
+  const [totalIncome, setTotalIncome] = useState(0);
+  const [totalExpense, setTotalExpense] = useState(0);
+  const [transactionCount, setTransactionCount] = useState(0);
 
-  const categoryData: CategoryData[] = [
-    { name: 'Expence', value: 9295.22 },
-    { name: 'Income', value: 12349.57 }
-  ];
-  const incomeData: CategoryData[] = [
-    { name: 'sales', value: 9295.22 },
-    { name: 'refunds', value: 12349.57 },
-    { name: 'salary received', value: 12349.57 }
-  ];
-  const expenceData: CategoryData[] = [
-    { name: 'rent', value: 9295.22 },
-    { name: 'utilities', value: 12349.57 },
-    { name: 'software', value: 9295.22 },
-    { name: 'subscriptions', value: 12349.57 },
-    { name: 'transport', value: 9295.22 }
-  ];
+  React.useEffect(() => {
+    async function fetchReports() {
+      setLoading(true);
+      try {
+        const apiFetch = (await import('../../../utils/api')).default;
+        const summary = await apiFetch('/api/reports/summary', { method: 'GET' });
+        const transactions = await apiFetch('/api/reports/transactions', { method: 'GET' });
+        
+        const income = summary?.total?.income || 0;
+        const expense = summary?.total?.expense || 0;
+        
+        setTotalIncome(income);
+        setTotalExpense(expense);
+        setTransactionCount(transactions?.data?.length || 0);
+        
+        setCategoryData([
+          { name: 'Expense', value: expense },
+          { name: 'Income', value: income }
+        ]);
+        
+        const incomeCategories = Object.entries(summary?.categories?.income || {}).map(([name, value]) => ({ name, value: Number(value) }));
+        const expenseCategories = Object.entries(summary?.categories?.expense || {}).map(([name, value]) => ({ name, value: Number(value) }));
+        
+        setIncomeData(incomeCategories.length > 0 ? incomeCategories : [{ name: 'No data', value: 0 }]);
+        setExpenceData(expenseCategories.length > 0 ? expenseCategories : [{ name: 'No data', value: 0 }]);
+      } catch (error) {
+        console.error('Failed to fetch reports:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchReports();
+  }, []);
 
   // merge income and expense categories into combined rows and sort by total (desc)
   const combinedNames = Array.from(new Set([...incomeData, ...expenceData].map((d) => d.name)));
@@ -151,7 +175,7 @@ export default function ReportsPage() {
                           <XAxis type="number" tick={{ fill: '#6b7280' }} />
                           <YAxis dataKey="name" type="category" width={150} tick={{ fill: '#374151', fontSize: 13 }} />
                           <Tooltip formatter={(value: number) => formatCurrency(value)} />
-                          <Bar dataKey="expense" fill="#f97316" barSize={18} />
+                          <Bar dataKey="expense" fill="#6366f1" barSize={18} />
                           <Bar dataKey="income" fill="#10b981" barSize={18} />
                         </BarChart>
                       </ResponsiveContainer>
@@ -172,22 +196,22 @@ export default function ReportsPage() {
               <div className="bg-white p-6 rounded-lg shadow-sm">
                 <p className="text-gray-600 text-sm">Total Transactions</p>
                 <div className="mt-4">
-                  <div className="text-2xl font-semibold text-gray-900">84</div>
+                  <div className="text-2xl font-semibold text-gray-900">{transactionCount}</div>
                   <p className="text-gray-500 text-xs mt-1">All time</p>
                 </div>
               </div>
 
               <div className="bg-white p-6 rounded-lg shadow-sm">
-                <p className="text-gray-600 text-sm">Income from Transactions</p>
+                <p className="text-gray-600 text-sm">Total Income</p>
                 <div className="mt-4">
-                  <div className="text-2xl font-semibold text-gray-900">52</div>
+                  <div className="text-2xl font-semibold text-gray-900">{formatCurrency(totalIncome)}</div>
                 </div>
               </div>
 
               <div className="bg-white p-6 rounded-lg shadow-sm">
-                <p className="text-gray-600 text-sm">Expence from Transactions</p>
+                <p className="text-gray-600 text-sm">Total Expense</p>
                 <div className="mt-4">
-                  <div className="text-2xl font-semibold text-gray-900">32</div>
+                  <div className="text-2xl font-semibold text-gray-900">{formatCurrency(totalExpense)}</div>
                 </div>
               </div>
             </div>
@@ -197,8 +221,8 @@ export default function ReportsPage() {
               <p className="text-sm text-gray-600 mb-4">Breakdown of transaction types</p>
               <div className="h-72">
                 <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={[{ type: 'Income', count: 52 }, 
-                                  { type: 'Expence', count: 32 }, 
+                  <BarChart data={[{ type: 'Income', count: incomeData.reduce((sum, d) => sum + d.value, 0) }, 
+                                  { type: 'Expense', count: expenceData.reduce((sum, d) => sum + d.value, 0) }, 
                                   ]} 
                                   margin={{ left: 0, right: 0, top: 62, bottom: 0 }}>
                     <CartesianGrid strokeDasharray="3 3" vertical={false} />

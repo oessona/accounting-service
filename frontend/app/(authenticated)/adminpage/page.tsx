@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Users, Trash2, Edit } from "lucide-react";
+import { Users, Trash2, Edit, AlertCircle } from "lucide-react";
 import apiFetch from "../../../utils/api";
 
 export default function AdminPage() {
@@ -11,40 +11,66 @@ export default function AdminPage() {
   const [auditLogs, setAuditLogs] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [user, setUser] = useState<any>(null);
+  const [accessDenied, setAccessDenied] = useState(false);
 
   React.useEffect(() => {
-    fetchUsers();
+    // Check if user is admin
+    const checkAdmin = async () => {
+      try {
+        const userData = await apiFetch('/api/user', { method: 'GET' });
+        setUser(userData);
+        if (userData?.role !== 'admin') {
+          setAccessDenied(true);
+        }
+      } catch (e) {
+        console.error(e);
+        setError('Failed to verify permissions');
+      }
+    };
+    checkAdmin();
   }, []);
 
   const fetchUsers = async () => {
+    if (accessDenied) return;
     setLoading(true);
     try {
       const data = await apiFetch('/api/admin/users', { method: 'GET' });
       if (Array.isArray(data)) setManagedUsers(data);
-    } catch (e) {
+    } catch (e: any) {
       console.error(e);
-      setError('Failed to fetch users');
+      if (e.status === 403) {
+        setAccessDenied(true);
+        setError('Access denied: Admin privileges required');
+      } else {
+        setError('Failed to fetch users');
+      }
     } finally {
       setLoading(false);
     }
   };
 
   const fetchActivity = async () => {
+    if (accessDenied) return;
     setLoading(true);
     try {
       const data = await apiFetch('/api/admin/activity', { method: 'GET' });
       if (Array.isArray(data)) setAuditLogs(data);
-    } catch (e) {
+    } catch (e: any) {
       console.error(e);
+      if (e.status === 403) {
+        setAccessDenied(true);
+        setError('Access denied: Admin privileges required');
+      }
     } finally {
       setLoading(false);
     }
   };
 
   React.useEffect(() => {
-    if (tab === 'manage') fetchUsers();
-    if (tab === 'activity') fetchActivity();
-  }, [tab]);
+    if (tab === 'manage' && !accessDenied) fetchUsers();
+    if (tab === 'activity' && !accessDenied) fetchActivity();
+  }, [tab, accessDenied]);
 
   const handleEdit = (id: number) => {
     alert(`Open edit for user id ${id}`);
@@ -73,14 +99,29 @@ export default function AdminPage() {
           </div>
         </div>
 
-        <div className="flex items-center gap-3 mb-4">
-          <button onClick={() => setTab('manage')} className={`px-3 py-1 rounded ${tab === 'manage' ? 'bg-emerald-600 text-white' : 'bg-gray-50 text-gray-700'}`}>Manage Users</button>
-          <button onClick={() => setTab('activity')} className={`px-3 py-1 rounded ${tab === 'activity' ? 'bg-emerald-600 text-white' : 'bg-gray-50 text-gray-700'}`}>
-            User Activity
-          </button>
-        </div>
+        {accessDenied ? (
+          <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
+            <AlertCircle className="w-12 h-12 text-red-500 mx-auto mb-3" />
+            <h2 className="text-lg font-semibold text-gray-900 mb-2">Access Denied</h2>
+            <p className="text-gray-600">You need administrator privileges to access this page.</p>
+            <p className="text-sm text-gray-500 mt-2">Current role: {user?.role || 'user'}</p>
+          </div>
+        ) : (
+          <>
+            <div className="flex items-center gap-3 mb-4">
+              <button onClick={() => setTab('manage')} className={`px-3 py-1 rounded ${tab === 'manage' ? 'bg-emerald-600 text-white' : 'bg-gray-50 text-gray-700'}`}>Manage Users</button>
+              <button onClick={() => setTab('activity')} className={`px-3 py-1 rounded ${tab === 'activity' ? 'bg-emerald-600 text-white' : 'bg-gray-50 text-gray-700'}`}>
+                User Activity
+              </button>
+            </div>
 
-        {tab === 'manage' && (
+            {error && !accessDenied && (
+              <div className="bg-yellow-50 border border-yellow-200 rounded p-3 mb-4 text-sm text-yellow-800">
+                {error}
+              </div>
+            )}
+
+            {tab === 'manage' && (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
@@ -120,11 +161,11 @@ export default function AdminPage() {
               <div className="flex items-center gap-3">
                 <div className="text-sm text-gray-600">Filter</div>
                 <select value={filter} onChange={(e) => setFilter(e.target.value)} className="border rounded px-2 py-1 text-sm">
-                  <option value="all">All</option>
+                  <option value="all">All Activities</option>
+                  <option value="Transaction Created">Transactions</option>
                   <option value="login">Logins</option>
-                  <option value="create_transaction">Adds</option>
-                  <option value="edit_transaction">Edits</option>
-                  <option value="delete_transaction">Deletes</option>
+                  <option value="edit">Edits</option>
+                  <option value="delete">Deletions</option>
                 </select>
               </div>
               <div className="text-sm text-gray-600">{auditLogs.length} events</div>
@@ -142,19 +183,32 @@ export default function AdminPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {auditLogs.filter(a => filter === 'all' ? true : a.action === filter).map(a => (
+                  {auditLogs.filter(a => filter === 'all' ? true : a.action.includes(filter)).map(a => (
                     <tr key={a.id} className="border-b border-gray-100 hover:bg-gray-50">
-                      <td className="py-3 px-4 text-gray-600">{new Date(a.at).toLocaleString()}</td>
-                      <td className="py-3 px-4 text-gray-800">{a.user}</td>
-                      <td className="py-3 px-4 text-gray-700">{a.action.replace('_', ' ')}</td>
-                      <td className="py-3 px-4 text-gray-600">{a.target}</td>
-                      <td className="py-3 px-4 text-gray-600">{a.details}</td>
+                      <td className="py-3 px-4 text-gray-600 text-xs">{new Date(a.at).toLocaleString('en-US', { 
+                        year: 'numeric', 
+                        month: 'short', 
+                        day: '2-digit', 
+                        hour: '2-digit', 
+                        minute: '2-digit',
+                        hour12: true 
+                      })}</td>
+                      <td className="py-3 px-4 text-gray-800 font-medium">{a.user}</td>
+                      <td className="py-3 px-4">
+                        <span className="inline-block px-2 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-800">
+                          {a.action}
+                        </span>
+                      </td>
+                      <td className="py-3 px-4 text-gray-700 font-mono text-xs">{a.target}</td>
+                      <td className="py-3 px-4 text-gray-600 text-sm">{a.details}</td>
                     </tr>
                   ))}
                 </tbody>
               </table>
             </div>
           </div>
+        )}
+          </>
         )}
 
       </div>

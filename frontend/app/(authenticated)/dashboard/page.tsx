@@ -45,24 +45,29 @@ export default function DashboardPage() {
     async function fetchDashboardData() {
       setIsLoading(true);
       try {
-        // Simulate loading for demo purposes
-        await new Promise(resolve => setTimeout(resolve, 500));
+        const [userRes, summaryRes, todayRes] = await Promise.all([
+          import('../../../utils/api').then(m => m.default('/api/user', { method: 'GET' }).catch(() => ({ name: 'User' }))),
+          import('../../../utils/api').then(m => m.default('/api/reports/summary', { method: 'GET' }).catch(() => ({ total: { income: 0, expense: 0, balance: 0 } }))),
+          import('../../../utils/api').then(m => m.default('/api/transactions/stats/today', { method: 'GET' }).catch(() => ({ income: 0, expense: 0 }))),
+        ]);
+
+        const income = summaryRes?.total?.income || 0;
+        const expense = summaryRes?.total?.expense || 0;
+        const balance = summaryRes?.total?.balance || (income - expense);
         
-        const mockData: DashboardData = {
-          userName: "Admin",
-          TotalValue: 27751.12,
-          IncomeValue: 83253.36,
-          ExpenseValue: 55502.24,
-          todaysActivity: 0,
-          growthInPercen: "+12%",
+        setDashboardData({
+          userName: userRes?.name || 'User',
+          TotalValue: balance,
+          IncomeValue: income,
+          ExpenseValue: expense,
+          todaysActivity: (todayRes?.income || 0) + (todayRes?.expense || 0),
+          growthInPercen: "+0%",
           monthlyData: {
-            income: [4500, 5100, 4600, 5900],
-            expense: [3800, 4200, 4500, 5100],
+            income: [income / 4, income / 4, income / 4, income / 4],
+            expense: [expense / 4, expense / 4, expense / 4, expense / 4],
             months: ['Sep', 'Oct', 'Nov', 'Dec']
           },
-        };
-        
-        setDashboardData(mockData);
+        });
       } catch (error) {
         console.error('Failed to fetch dashboard data:', error);
       } finally {
