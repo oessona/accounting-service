@@ -10,7 +10,7 @@ export default function AccountMenu() {
   const router = useRouter();
   const user = {
     name: "Name",
-    role: "Admin"
+    role: "User"
   };
 
   return (
@@ -43,7 +43,21 @@ export default function AccountMenu() {
               </button>
             </li>
             <li>
-              <button className="flex items-center gap-2 w-full text-left px-3 py-2 rounded-lg hover:bg-red-50 text-red-600">
+              <button 
+                onClick={async () => {
+                  try {
+                    const apiFetch = (await import('../../utils/api')).default;
+                    await apiFetch('/api/logout', { method: 'POST', silent: true });
+                  } catch (e) {
+                    console.error('Logout error:', e);
+                  } finally {
+                    localStorage.removeItem('auth_token');
+                    document.cookie = 'auth_token=; path=/; max-age=0';
+                    window.location.href = '/login';
+                  }
+                }}
+                className="flex items-center gap-2 w-full text-left px-3 py-2 rounded-lg hover:bg-red-50 text-red-600"
+              >
                 <LogOut className="w-4 h-4" />
                 Logout
               </button>
