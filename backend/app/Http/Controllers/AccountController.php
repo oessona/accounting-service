@@ -95,7 +95,7 @@ class AccountController extends Controller
         $validated = $request->validate([
             'user_id' => 'integer',
             'name' => 'sometimes|string|max:255',
-            'type' => 'sometimes|in:income,expense,savings',
+            'type' => 'sometimes|in:checking,savings,credit_card,cash,investment',
             'balance' => 'sometimes|numeric|min:0'
         ]);
 

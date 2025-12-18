@@ -38,7 +38,7 @@ class TransactionController extends Controller
      */
     public function index()
     {
-        return Transaction::where('user_id', Auth::id())->get();
+        return Transaction::with(['account', 'category'])->where('user_id', Auth::id())->get();
     }
 
     /**
@@ -99,7 +99,8 @@ class TransactionController extends Controller
         $data['category_id'] = $category->id;
         unset($data['category']); // parsing category name to create/find category_id
 
-        return Transaction::create($data);
+        $transaction = Transaction::create($data);
+        return $transaction->load(['account', 'category']);
     }
 
     public function show($id)
@@ -120,9 +121,18 @@ class TransactionController extends Controller
             'transaction_date' => 'date'
         ]);
 
+        if (isset($data['category'])) {
+            $category = \App\Models\Category::firstOrCreate(
+                ['name' => $data['category'], 'type' => $transaction->type],
+                ['name' => $data['category'], 'type' => $transaction->type]
+            );
+            $data['category_id'] = $category->id;
+            unset($data['category']);
+        }
+
         $transaction->update($data);
 
-        return $transaction;
+        return $transaction->load(['account', 'category']);
     }
 
     public function destroy($id)
