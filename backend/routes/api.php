@@ -24,6 +24,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/transactions/{id}', [TransactionController::class, 'update']);
     Route::delete('/transactions/{id}', [TransactionController::class, 'destroy']);
 
+    Route::get('/dashboard', [\App\Http\Controllers\DashboardController::class, 'index']);
+
     // Reports
     Route::get('/reports/summary', [ReportController::class, 'summary']);
     Route::get('/reports/transactions', [ReportController::class, 'allTransactions']);

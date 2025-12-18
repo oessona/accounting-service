@@ -12,7 +12,7 @@ class ReportController extends Controller
         $userId = auth()->id();
 
         $transactions = Transaction::where('user_id', $userId)
-            ->with('category')
+            ->with(['category', 'account'])
             ->get();
 
         $totalIncome = $transactions->where('type', 'income')->sum('amount');
@@ -28,6 +28,21 @@ class ReportController extends Controller
             ->groupBy('category.name')
             ->map->sum('amount');
 
+        // Account specific data
+        $accounts = $transactions->groupBy('account_id')->map(function ($txs) {
+            $first = $txs->first();
+            return [
+                'id' => $first->account_id,
+                'name' => $first->account->name ?? 'Unknown',
+                'income' => $txs->where('type', 'income')->sum('amount'),
+                'expense' => $txs->where('type', 'expense')->sum('amount'),
+                'categories' => [
+                    'income' => $txs->where('type', 'income')->groupBy('category.name')->map->sum('amount'),
+                    'expense' => $txs->where('type', 'expense')->groupBy('category.name')->map->sum('amount'),
+                ]
+            ];
+        })->values();
+
         return response()->json([
             'success' => true,
             'total' => [
@@ -39,6 +54,7 @@ class ReportController extends Controller
                 'income' => $incomeByCategory,
                 'expense' => $expenseByCategory,
             ],
+            'accounts' => $accounts
         ]);
     }
 

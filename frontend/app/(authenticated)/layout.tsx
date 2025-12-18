@@ -1,14 +1,15 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import Navigation from '../components/Navigation';
 import AccountMenu from '../components/acc_menu';
 import { useRouter, usePathname } from 'next/navigation';
+import { Calendar, Layout } from 'lucide-react';
 
 function formatDate(date: Date): string {
   return date.toLocaleDateString('en-US', {
     day: '2-digit',
-    month: '2-digit',
+    month: 'short',
     year: 'numeric'
   });
 }
@@ -20,8 +21,11 @@ export default function AuthenticatedLayout({
 }) {
   const router = useRouter();
   const pathname = usePathname();
+  const [currentDate, setCurrentDate] = useState<Date | null>(null);
 
   useEffect(() => {
+    setCurrentDate(new Date());
+
     // Check authentication on mount and route changes
     const token = localStorage.getItem('auth_token');
     if (!token) {
@@ -30,45 +34,57 @@ export default function AuthenticatedLayout({
   }, [router, pathname]);
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-[#F8FAFC]">
       {/* Header */}
-      <header className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+      <header className="bg-white/80 backdrop-blur-md sticky top-0 z-50 border-b border-slate-100">
+        <div className="max-w-7xl mx-auto px-6 lg:px-10 py-4">
           <div className="flex justify-between items-center">
             {/* Logo and System Name */}
-            <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-teal-600 rounded flex items-center justify-center">
-                <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                </svg>
+            <div className="flex items-center space-x-4">
+              <div className="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-200">
+                <Layout className="w-6 h-6 text-white" />
               </div>
-              <div>
-                <h1 className="text-xl font-semibold text-gray-900">Accounting System</h1>
-                <p className="text-sm text-gray-500">Management Portal</p>
+              <div className="hidden sm:block">
+                <h1 className="text-xl font-black text-slate-900 leading-none">Accounting Service</h1>
+                <p className="text-[10px] uppercase font-bold text-slate-400 tracking-widest mt-1">Financial OS</p>
               </div>
+            </div>
+
+            {/* Navigation (Integrated in Header) */}
+            <div className="hidden md:block">
+              <Navigation />
             </div>
 
             {/* Right side items */}
             <div className="flex items-center space-x-6">
-              <div className="text-sm text-gray-500">
-                Today's Date<br />
-                <span className="font-medium text-gray-900">{formatDate(new Date())}</span>
+              <div className="hidden lg:flex items-center gap-3 bg-slate-50 px-4 py-2 rounded-xl border border-slate-100">
+                <Calendar className="w-4 h-4 text-indigo-600" />
+                <span className="text-sm font-bold text-slate-600 italic">
+                  {currentDate ? formatDate(currentDate) : <span className="opacity-0">Loading...</span>}
+                </span>
               </div>
               <AccountMenu />
             </div>
           </div>
 
-          {/* Navigation */}
-          <nav className="mt-6">
+          {/* Mobile Navigation */}
+          <div className="md:hidden mt-4 overflow-x-auto pb-2">
             <Navigation />
-          </nav>
+          </div>
         </div>
       </header>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {children}
+      <main className="max-w-7xl mx-auto px-0 lg:px-4 py-0 lg:py-4">
+        <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
+          {children}
+        </div>
       </main>
+
+      {/* Footer Decoration */}
+      <footer className="py-10 text-center text-slate-300 text-xs font-medium uppercase tracking-[0.2em]">
+        &copy; 2025 Accounting Service &bull; Secure Financial Infrastructure
+      </footer>
     </div>
   );
 }

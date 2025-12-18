@@ -3,6 +3,7 @@
 import React, { JSX, useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { Mail, Lock, User, CheckCircle, ArrowRight, Layout, ShieldCheck } from "lucide-react";
 import apiFetch from '../../utils/api';
 
 type FormState = {
@@ -38,6 +39,7 @@ export default function SignUpPage(): JSX.Element {
     setForm({ ...form, [e.target.name]: e.target.value });
 
   const validate = (): string | null => {
+    if (form.name.length < 3) return "Name must be at least 3 characters";
     if (!emailRegex.test(form.email)) return "Invalid email format";
     if (form.password.length < 6) return "Password must be at least 6 characters";
     if (form.password !== form.password_confirmation) return "Passwords do not match";
@@ -58,10 +60,10 @@ export default function SignUpPage(): JSX.Element {
     try {
       const result = await apiFetch('/api/register', {
         method: 'POST',
-        body: JSON.stringify({ 
-          name: form.name, 
-          email: form.email, 
-          password: form.password, 
+        body: JSON.stringify({
+          name: form.name,
+          email: form.email,
+          password: form.password,
           password_confirmation: form.password_confirmation
         }),
       });
@@ -74,6 +76,8 @@ export default function SignUpPage(): JSX.Element {
       } else {
         setSuccess("Account created successfully.");
         setForm({ name: "", email: "", password: "", password_confirmation: "" });
+        // Optional: Redirect to login or auto-login logic here if token wasn't returned
+        setTimeout(() => router.push('/login'), 2000);
       }
     } catch (err: any) {
       console.error('Registration error:', err);
@@ -84,105 +88,143 @@ export default function SignUpPage(): JSX.Element {
   };
 
   return (
-    <main className="w-full min-h-screen bg-gray-100 flex items-center justify-center px-4 sm:px-6 lg:px-8 py-12">
-      <div className="w-full max-w-md bg-white rounded-xl border border-gray-200 shadow-md p-6 sm:p-8">
-          <h1 className="text-center text-2xl sm:text-3xl font-semibold mb-6 text-gray-900">Sign Up</h1>
+    <div className="min-h-screen bg-[#F8FAFC] flex items-center justify-center p-6 relative overflow-hidden">
+      {/* Decorative Background Elements */}
+      <div className="absolute top-[-10%] right-[-10%] w-[50%] h-[50%] bg-indigo-500/10 rounded-full blur-[100px]" />
+      <div className="absolute bottom-[-10%] left-[-10%] w-[50%] h-[50%] bg-emerald-500/10 rounded-full blur-[100px]" />
 
-          <form onSubmit={onSubmit} className="space-y-4 text-gray-600">
-            <div>
-              <label htmlFor="name" className="sr-only">
-                Name
-              </label>
-              <input
-                id="name"
-                name="name"
-                autoComplete="name"
-                value={form.name}
-                onChange={onChange}
-                placeholder="Enter your name..."
-                className={`w-full border ${error && form.name.length < 3 ? 'border-red-600' : 'border-gray-300'} rounded-md px-3 py-2 text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500`}
-                required
-              />
-            </div>
-            <div>
-              <label htmlFor="email" className="sr-only">
-                Email
-              </label>
-              <input
-                id="email"
-                name="email"
-                autoComplete="email"
-                value={form.email}
-                onChange={onChange}
-                placeholder="Enter your email..."
-                className={`w-full border ${error && form.email && !emailRegex.test(form.email) ? 'border-red-600' : 'border-gray-300'} rounded-md px-3 py-2 text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500`}
-                required
-              />
-            </div>
+      <div className="w-full max-w-lg relative z-10 animate-in fade-in zoom-in-95 duration-500">
+        <div className="bg-white/80 backdrop-blur-xl rounded-[2.5rem] border border-white shadow-2xl shadow-indigo-100/50 p-8 sm:p-10">
 
-            <div>
-              <label htmlFor="password" className="sr-only">
-                Password
+          <div className="text-center mb-10">
+            <div className="w-16 h-16 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-2xl flex items-center justify-center shadow-lg shadow-emerald-200 mx-auto mb-6 transform rotate-6">
+              <ShieldCheck className="w-8 h-8 text-white" />
+            </div>
+            <h1 className="text-2xl font-black text-slate-900 leading-tight">Join the Network</h1>
+            <p className="text-slate-400 font-medium mt-2">Initialize your secure financial identity</p>
+          </div>
+
+          <form onSubmit={onSubmit} className="space-y-5">
+            <div className="space-y-2">
+              <label htmlFor="name" className="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">
+                Full Name
               </label>
-              <input
-                id="password"
-                name="password"
-                type="password"
-                autoComplete="new-password"
-                value={form.password}
-                onChange={onChange}
-                placeholder="Create a password..."
-                className={`w-full border ${error && form.password.length < 6 ? 'border-red-600' : 'border-gray-300'} rounded-md px-3 py-2 text-sm placeholder-gray-400 focus:outline-none focus:ring-2`}
-                required
-              />
+              <div className="relative group">
+                <User className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-emerald-600 transition-colors" size={20} />
+                <input
+                  id="name"
+                  name="name"
+                  autoComplete="name"
+                  value={form.name}
+                  onChange={onChange}
+                  placeholder="John Doe"
+                  className="w-full h-14 pl-12 pr-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-emerald-500 focus:bg-white outline-none font-bold text-slate-700 transition-all placeholder:text-slate-300"
+                  required
+                />
+              </div>
             </div>
 
-            <div>
-              <label htmlFor="password_confirmation" className="sr-only">
-                password_confirmation Password
+            <div className="space-y-2">
+              <label htmlFor="email" className="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">
+                Email Endpoint
               </label>
-              <input
-                id="password_confirmation"
-                name="password_confirmation"
-                type="password"
-                autoComplete="new-password"
-                value={form.password_confirmation}
-                onChange={onChange}
-                placeholder="password_confirmation your password"
-                className={`w-full border ${error && form.password !== form.password_confirmation ? 'border-red-600' : 'border-gray-300'} rounded-md px-3 py-2 text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500`}
-                required
-              />
+              <div className="relative group">
+                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-emerald-600 transition-colors" size={20} />
+                <input
+                  id="email"
+                  name="email"
+                  autoComplete="email"
+                  value={form.email}
+                  onChange={onChange}
+                  placeholder="name@company.com"
+                  className="w-full h-14 pl-12 pr-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-emerald-500 focus:bg-white outline-none font-bold text-slate-700 transition-all placeholder:text-slate-300"
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label htmlFor="password" className="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">
+                  Password
+                </label>
+                <div className="relative group">
+                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-emerald-600 transition-colors" size={20} />
+                  <input
+                    id="password"
+                    name="password"
+                    type="password"
+                    autoComplete="new-password"
+                    value={form.password}
+                    onChange={onChange}
+                    placeholder="••••••••"
+                    className="w-full h-14 pl-12 pr-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-emerald-500 focus:bg-white outline-none font-bold text-slate-700 transition-all placeholder:text-slate-300"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <label htmlFor="password_confirmation" className="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">
+                  Confirm
+                </label>
+                <div className="relative group">
+                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-emerald-600 transition-colors" size={20} />
+                  <input
+                    id="password_confirmation"
+                    name="password_confirmation"
+                    type="password"
+                    autoComplete="new-password"
+                    value={form.password_confirmation}
+                    onChange={onChange}
+                    placeholder="••••••••"
+                    className="w-full h-14 pl-12 pr-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-emerald-500 focus:bg-white outline-none font-bold text-slate-700 transition-all placeholder:text-slate-300"
+                    required
+                  />
+                </div>
+              </div>
             </div>
 
             {error && (
-              <p className="text-sm text-red-600 bg-red-50 p-2 rounded-md">
+              <div className="flex items-center gap-3 p-4 bg-rose-50 text-rose-600 rounded-2xl text-sm font-bold animate-in slide-in-from-top-2 border border-rose-100">
+                <ShieldCheck size={18} />
                 {error}
-              </p>
+              </div>
             )}
+
             {success && (
-              <p className="text-sm text-green-600 bg-green-50 p-2 rounded-md">
+              <div className="flex items-center gap-3 p-4 bg-emerald-50 text-emerald-600 rounded-2xl text-sm font-bold animate-in slide-in-from-top-2 border border-emerald-100">
+                <CheckCircle size={18} />
                 {success}
-              </p>
+              </div>
             )}
 
             <button
               type="submit"
-              className={`w-full mt-2 inline-flex items-center justify-center bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2.5 rounded-md shadow-sm transition-colors ${
-                loading ? "opacity-70 cursor-wait" : ""
-              }`}
               disabled={loading}
+              className="w-full h-14 bg-emerald-600 hover:bg-emerald-700 text-white font-black rounded-2xl shadow-lg shadow-emerald-100 transition-all active:scale-95 flex items-center justify-center gap-2 group mt-4"
             >
-              {loading ? "Signing up..." : "Sign up"}
+              {loading ? (
+                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              ) : (
+                <>
+                  <span>Create Credentials</span>
+                  <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
+                </>
+              )}
             </button>
           </form>
 
-          <p className="text-center text-sm text-gray-500 mt-6">
-            Already have an account?{" "}
-            <Link href="/login" className="text-emerald-600 hover:text-emerald-700 hover:underline font-medium">
-              Login
-            </Link>
-          </p>
+          <div className="mt-8 text-center">
+            <p className="text-slate-400 text-sm font-medium">
+              Already authorized?{" "}
+              <Link href="/login" className="text-emerald-600 hover:text-emerald-700 font-bold hover:underline">
+                Access Vault
+              </Link>
+            </p>
+          </div>
+        </div>
       </div>
-    </main>
+    </div>
   );
 }
