@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AccountController;
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\TransactionController;
 use Illuminate\Support\Facades\Route;
@@ -37,13 +38,13 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/accounts/{id}', [AccountController::class, 'destroy']);
 
     // Admin (protected by simple check in Controller or dedicated middleware - assuming check in controller for now or standard auth)
-    // For proper security, we should check $user->isAdmin(). 
+    // For proper security, we should check $user->isAdmin().
     // Adding a group that checks for admin would be best, but for speed, let's rely on Controller logic + auth
 
     Route::prefix('admin')->group(function () {
-        Route::get('/users', [\App\Http\Controllers\AdminController::class, 'index']);
-        Route::delete('/users/{id}', [\App\Http\Controllers\AdminController::class, 'destroy']);
-        Route::get('/activity', [\App\Http\Controllers\AdminController::class, 'activity']);
+        Route::get('/users', [AdminController::class, 'index']);
+        Route::delete('/users/{id}', [AdminController::class, 'destroy']);
+        Route::get('/activity', [AdminController::class, 'activity']);
     });
 });
 
